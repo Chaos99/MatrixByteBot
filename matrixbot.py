@@ -9,11 +9,12 @@ botLog = logging.getLogger('BotLog')
 
 from matrix_client.client import MatrixClient
 from matrix_client.api import MatrixHttpApi
+from urllib.parse import urlparse
 
 class MatrixBot:
     def __init__(self, username, password, server, roomId):
         self.username = username
-
+        self.fullname = "@"+str(username).lower()+':'+urlparse(server).hostname
         # Connect to server
         botLog.debug("creating matrix client for server {}".format( server))
         self.client = MatrixClient(server)
@@ -56,3 +57,8 @@ class MatrixBot:
     def send(self, text):
         botLog.debug("Sending sample text to room")
         self.api.send_message(self.currentRoom, text)
+        
+    def start_polling(self):
+        # Starts polling for messages
+        self.client.start_listener_thread()
+        return self.client.sync_thread

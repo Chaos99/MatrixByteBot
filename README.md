@@ -6,8 +6,16 @@
  Interfacing a matrix network, using the matrix-sdk.
  Written in Python 3.6.
 
+## Status
+Concept phase and build environment setup
+
 ## Build instructions
-tbd
+### build environment
+- original setup includes
+  - WinPython 3.6.6.2 including Python 3.6.6
+  - pip 18.1
+  - virtualenv 16.0.0 
 
 ## Usage instructions
 tbd
+

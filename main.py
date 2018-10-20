@@ -27,6 +27,11 @@ PASSWORD = ""  # Bot's password
 SERVER = "https://erfurt.chat"  # Matrix server URL
 ROOM = "#bot_test"
 
+try:
+   from private_settings import *
+except ImportError:
+   pass
+
 def hi_callback(room, event):
     # Somebody said hi, let's say Hi back
     room.send_text("Hi, " + event['sender'])

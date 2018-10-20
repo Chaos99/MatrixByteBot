@@ -102,3 +102,7 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+#### project specific
+# passwords, private data
+private_settings.py

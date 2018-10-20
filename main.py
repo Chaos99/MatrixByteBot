@@ -10,6 +10,9 @@ Test it out by adding it to a group chat and doing one of the following:
 import random, logging
 
 logging.basicConfig(level=logging.DEBUG)
+logging.getLogger("requests").setLevel(logging.WARNING)
+logging.getLogger("urllib3").setLevel(logging.WARNING)
+
 mainLog = logging.getLogger('MainLog')
 
 from matrix_bot_api.matrix_bot_api import MatrixBotAPI

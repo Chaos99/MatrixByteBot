@@ -7,13 +7,16 @@ Test it out by adding it to a group chat and doing one of the following:
 3. Say !d6 to get a random size-sided die roll result
 """
 
-import random
+import random, logging
+
+logging.basicConfig(level=logging.DEBUG)
+mainLog = logging.getLogger('MainLog')
 
 from matrix_bot_api.matrix_bot_api import MatrixBotAPI
 from matrix_bot_api.mregex_handler import MRegexHandler
 from matrix_bot_api.mcommand_handler import MCommandHandler
 
-import MatrixBot
+from matrixbot import MatrixBot
 
 # Global variables
 USERNAME = "MatrixBotAlpha"  # Bot's username
@@ -60,6 +63,8 @@ def dieroll_callback(room, event):
 
 def main():
     # Create an instance of the MatrixBotAPI
+    mainLog.debug("main() started, trying to initialize")
+    mainLog.debug("MatrixBot initializing with room {}".format(ROOM))
     bot = MatrixBot(USERNAME, PASSWORD, SERVER, ROOM)
 
     # Add a regex handler waiting for the word Hi

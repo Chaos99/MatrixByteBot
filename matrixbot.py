@@ -25,17 +25,18 @@ class MatrixBot:
             botLog.error("Login Failed: {}".format(e))
             return(None)
         #this is a second connection with different interface
+        botLog.debug("Creating matrix API endpoint")        
         self.api = MatrixHttpApi(server, self.token)
-        botLog.debug("Matrix API endpoint created")
+        botLog.debug("Syncing..")
         self.api.sync()
-        botLog.debug("synced")
         if str(roomId).startswith('!'):            
             self.currentRoom = roomId
         else:
             self.currentRoom = self.getRoomIdByName(roomId)
+        botLog.debug("Joining room with id {}".format( self.currentRoom))            
         self.api.join_room(self.currentRoom)
-        botLog.debug("Joined room with id {}".format( self.currentRoom))
         
+        botLog.debug("Getting member info")
         self.members = self.api.get_room_members(self.currentRoom)
         botLog.debug("Members in room: {}".format(",".join([a.sender for a in self.members['chunk']])))
         #self.rooms = 
@@ -48,9 +49,10 @@ class MatrixBot:
             else:
                 rid = self.api.get_room_id('#' + name)
         except Exception as e:
-            print("room name not found")
+            botLog.warning("Room name '{}' not found".format(name))
             rid = ""
         return rid
     
     def send(self, text):
+        botLog.debug("Sending sample text to room")
         self.api.send_message(self.currentRoom, text)

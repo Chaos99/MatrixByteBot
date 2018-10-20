@@ -1,0 +1,3 @@
+[submodule "python-matrix-bot-api"]
+	path = python-matrix-bot-api
+	url = https://github.com/shawnanastasio/python-matrix-bot-api.git

@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "b6c63d2ad7c78f7a806ae77fbe8fdcfcbfde869d7f0a109fa1fa39ef0233905a"
+            "sha256": "676682d130b89fe584416431ee23421920eb31fb7ea1adfff784afe51dcb9e6e"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -36,6 +36,10 @@
                 "sha256:684a38a6f903c1d71d6d5fac066b58d7768af4de2b832e426ec79c30daa94a16"
             ],
             "version": "==2.7"
+        },
+        "matrix-bot-api": {
+            "editable": true,
+            "path": "./python-matrix-bot-api"
         },
         "matrix-client": {
             "hashes": [

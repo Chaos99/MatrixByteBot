@@ -25,7 +25,7 @@ from matrixbot import MatrixBot
 USERNAME = "MatrixBotAlpha"  # Bot's username
 PASSWORD = ""  # Bot's password
 SERVER = "https://erfurt.chat"  # Matrix server URL
-ROOM = "#bot_test"
+ROOM = "#bot_test:erfurt.chat"
 
 try:
    from private_settings import *

@@ -38,7 +38,7 @@ class MatrixBot:
         
         botLog.debug("Getting member info")
         self.members = self.api.get_room_members(self.currentRoom)
-        botLog.debug("Members in room: {}".format(",".join([a.sender for a in self.members['chunk']])))
+        botLog.debug("Members in room: {}".format(",".join([a['sender'] if 'sender' in a.keys() else "" for a in self.members['chunk']])))
         #self.rooms = 
         
     def getRoomIdByName(self, name):

@@ -6,6 +6,8 @@ name = "pypi"
 [packages]
 matrix-client = "*"
 matrix-bot-api = {editable = true, path = "./python-matrix-bot-api"}
+spyder-kernels = "<=1.0"
+spyder = "*"
 
 [dev-packages]
 

@@ -7,7 +7,8 @@
  Written in Python 3.6.
 
 ## Status
-Concept phase and build environment setup
+~~Concept phase and build environment setup~~
+Prototyping login and triggering
 
 ## Build instructions
 ### build environment
@@ -23,7 +24,9 @@ Concept phase and build environment setup
     the matrix bot api https://github.com/shawnanastasio/python-matrix-bot-api
 
 ## Usage instructions
-tbd
+1. Create private_settings.py with a single line ```PASSWORD = "yourpassword"```
+2. update USERNAME, SERVER and ROOM in main.py near the top
+3. Start with ```pipenv run python main.py```
 
 ## Licenses
 See LICENSE file for GPLv3 license of this software.

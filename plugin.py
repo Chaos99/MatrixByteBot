@@ -22,7 +22,10 @@ class Plugin:
 
     def handle_message(self, room, event):
         # Make sure we didn't send this message
-        pluginLog.debug("Handling message {}:{}".format(event['sender'], event['content']['body']))
+        try:
+            pluginLog.debug("Handling message {}:{}".format(event['sender'], event['content']['body']))
+        except Exception as e:
+            pluginLog.debug("Message {} caused exception {}".format(event, e))
         if re.match(self.bot.fullname, event['sender']):
             pluginLog.debug("Discarded because self-sent")
             return

@@ -7,23 +7,20 @@ Test it out by adding it to a group chat and doing one of the following:
 3. Say !d6 to get a random size-sided die roll result
 """
 
-import random, logging
+import logging
 
-logging.basicConfig(level=logging.DEBUG)
-logging.getLogger("requests").setLevel(logging.WARNING)
-logging.getLogger("urllib3").setLevel(logging.WARNING)
-
-mainLog = logging.getLogger('MainLog')
+from matrixbot import MatrixBot
 
 from hiplugin import HiPlugin
 from helpplugin import HelpPlugin
 from maintenanceplugin import MaintenancePlugin
 
-from matrix_bot_api.matrix_bot_api import MatrixBotAPI
-from matrix_bot_api.mregex_handler import MRegexHandler
-from matrix_bot_api.mcommand_handler import MCommandHandler
+# logging configuration
+logging.basicConfig(level=logging.DEBUG)
+logging.getLogger("requests").setLevel(logging.WARNING)
+logging.getLogger("urllib3").setLevel(logging.WARNING)
 
-from matrixbot import MatrixBot
+MAIN_LOG = logging.getLogger('MainLog')
 
 # Global variables
 USERNAME = "MatrixBotAlpha"  # Bot's username
@@ -32,66 +29,32 @@ SERVER = "https://erfurt.chat"  # Matrix server URL
 ROOM = "#bot_test:erfurt.chat"
 
 try:
-   from private_settings import *
+    from private_settings import PASSWORD
 except ImportError:
-   pass
-
-
-
-def echo_callback(room, event):
-    args = event['content']['body'].split()
-    args.pop(0)
-
-    # Echo what they said back
-    room.send_text(' '.join(args))
-
-
-def dieroll_callback(room, event):
-    # someone wants a random number
-    args = event['content']['body'].split()
-
-    # we only care about the first arg, which has the die
-    die = args[0]
-    die_max = die[2:]
-
-    # ensure the die is a positive integer
-    if not die_max.isdigit():
-        room.send_text('{} is not a positive number!'.format(die_max))
-        return
-
-    # and ensure it's a reasonable size, to prevent bot abuse
-    die_max = int(die_max)
-    if die_max <= 1 or die_max >= 1000:
-        room.send_text('dice must be between 1 and 1000!')
-        return
-
-    # finally, send the result back
-    result = random.randrange(1,die_max+1)
-    room.send_text(str(result))
+    pass
 
 
 def main():
-
+    """Main function to start the bot, add plugins and start listening loop"""
     # Create an instance of the MatrixBotAPI
-    mainLog.debug("main() started, trying to initialize")
-    mainLog.debug("MatrixBot initializing with room {}".format(ROOM))
+    MAIN_LOG.debug("main() started, trying to initialize")
+    MAIN_LOG.debug("MatrixBot initializing with room %s", ROOM)
     bot = MatrixBot(USERNAME, PASSWORD, SERVER, ROOM)
 
-    # Add a regex handler waiting for the word 
-    mainLog.debug("Creating HiPlugin")
-    bot.addPlugin(HiPlugin("SayHi-Plugin", bot))
-    bot.addPlugin(HelpPlugin("Help-Plugin", bot))
-    bot.addPlugin(MaintenancePlugin("Maintenance-Plugin", bot))
+    # Add a regex handler waiting for the word
+    MAIN_LOG.debug("Creating HiPlugin")
+    bot.add_plugin(HiPlugin("SayHi-Plugin", bot))
+    bot.add_plugin(HelpPlugin("Help-Plugin", bot))
+    bot.add_plugin(MaintenancePlugin("Maintenance-Plugin", bot))
 
-    
     for room_id, room in bot.client.get_rooms().items():
-        mainLog.debug("Registering plugins in room {}".format(room_id))
+        MAIN_LOG.debug("Registering plugins in room %s", room_id)
         for plugin in bot.plugins:
             room.add_listener(plugin.handle_message)
-    
+
     # Start polling
     bot.start_polling()
-    
+
     bot.send("Startup successful")
 
     # Infinitely read stdin to stall main thread while the bot runs in other threads
@@ -102,6 +65,6 @@ def main():
             break
 
     quit()
-    
+
 if __name__ == "__main__":
     main()

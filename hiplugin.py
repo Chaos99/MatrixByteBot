@@ -1,27 +1,28 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sat Oct 20 23:38:58 2018
-
-@author: ssc
+Example plugin that just says "Hi"
 """
-import re, logging
-hiLog = logging.getLogger('HiPluginLog')
-
+import re
+import logging
 from plugin import Plugin
 
+HI_LOG = logging.getLogger('HiPluginLog')
+
 class HiPlugin(Plugin):
+    """ Plugin that says 'Hi' if greeted"""
     def __init__(self, name, bot):
-        hiLog.debug("Creating HiPlugin")
+        HI_LOG.debug("Creating HiPlugin")
         Plugin.__init__(self, name, bot)
-        hiLog.debug("Adding matcher for 'Hi'")
-        Plugin.addMatcher(self, re.compile("![Hh]i"))
-        Plugin.addMatcher(self, re.compile("![Hh]ello"))
-        
+        HI_LOG.debug("Adding matcher for 'Hi'")
+        Plugin.add_matcher(self, re.compile("![Hh]i"))
+        Plugin.add_matcher(self, re.compile("![Hh]ello"))
+
     def callback(self, room, event):
+        """ Return "Hi <username>" if called"""
         # Somebody said hi, let's say Hi back
-        hiLog.debug("{} sends response".format(self.name))
+        HI_LOG.debug("%s sends response", self.name)
         room.send_text("Hi, " + event['sender'])
-     
-    def getHelp(self):
-        return("Answers friendly on anything starting with !Hi or !Hello")
-     
+
+    def get_help(self):
+        """Return help text"""
+        return "Answers friendly on anything starting with !Hi or !Hello"

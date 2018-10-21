@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.1.3
+- added Help plugin
+
+## 0.1.2
+- added SayHi plugin
+
+## 0.1.1
+- added multi-plugin support
+- added multi-phrase support
+
 ## 0.1.0
 - fixed login
 - first working prototype

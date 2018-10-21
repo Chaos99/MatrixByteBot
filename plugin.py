@@ -62,3 +62,6 @@ class Plugin:
     
     def callback(self):
         raise NotImplementedError('You need to define a "callback()" method!')
+
+    def getHelp(self):
+        raise NotImplementedError('You need to define a "getHelp()" method!')

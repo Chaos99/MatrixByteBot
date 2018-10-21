@@ -15,6 +15,7 @@ class MatrixBot:
     def __init__(self, username, password, server, roomId):
         self.username = username
         self.fullname = "@"+str(username).lower()+':'+urlparse(server).hostname
+        self.plugins=[]
         # Connect to server
         botLog.debug("creating matrix client for server {}".format( server))
         self.client = MatrixClient(server)
@@ -41,7 +42,10 @@ class MatrixBot:
         self.members = self.api.get_room_members(self.currentRoom)
         botLog.debug("Members in room: {}".format(",".join([a['sender'] if 'sender' in a.keys() else "" for a in self.members['chunk']])))
         #self.rooms = 
-        
+    
+    def addPlugin(self, plugin):
+        self.plugins.append(plugin)
+    
     def getRoomIdByName(self, name):
         botLog.debug("Getting room ID for name '{}'".format(name))
         try:

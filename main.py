@@ -16,6 +16,7 @@ logging.getLogger("urllib3").setLevel(logging.WARNING)
 mainLog = logging.getLogger('MainLog')
 
 from hiplugin import HiPlugin
+from helpplugin import HelpPlugin
 
 from matrix_bot_api.matrix_bot_api import MatrixBotAPI
 from matrix_bot_api.mregex_handler import MRegexHandler
@@ -69,7 +70,6 @@ def dieroll_callback(room, event):
 
 
 def main():
-    plugins = []
 
     # Create an instance of the MatrixBotAPI
     mainLog.debug("main() started, trying to initialize")
@@ -78,11 +78,13 @@ def main():
 
     # Add a regex handler waiting for the word 
     mainLog.debug("Creating HiPlugin")
-    plugins.append(HiPlugin("SayHi-Plugin", bot))
+    bot.addPlugin(HiPlugin("SayHi-Plugin", bot))
+    bot.addPlugin(HelpPlugin("Help-Plugin", bot))
+
     
     for room_id, room in bot.client.get_rooms().items():
         mainLog.debug("Registering plugins in room {}".format(room_id))
-        for plugin in plugins:
+        for plugin in bot.plugins:
             room.add_listener(plugin.handle_message)
     
     # Start polling
@@ -92,7 +94,9 @@ def main():
 
     # Infinitely read stdin to stall main thread while the bot runs in other threads
     while True:
-        input()
+        serial = input()
+        if serial == 'q':
+            quit()
 
 
 if __name__ == "__main__":

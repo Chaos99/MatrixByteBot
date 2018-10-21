@@ -17,6 +17,7 @@ mainLog = logging.getLogger('MainLog')
 
 from hiplugin import HiPlugin
 from helpplugin import HelpPlugin
+from maintenanceplugin import MaintenancePlugin
 
 from matrix_bot_api.matrix_bot_api import MatrixBotAPI
 from matrix_bot_api.mregex_handler import MRegexHandler
@@ -80,6 +81,7 @@ def main():
     mainLog.debug("Creating HiPlugin")
     bot.addPlugin(HiPlugin("SayHi-Plugin", bot))
     bot.addPlugin(HelpPlugin("Help-Plugin", bot))
+    bot.addPlugin(MaintenancePlugin("Maintenance-Plugin", bot))
 
     
     for room_id, room in bot.client.get_rooms().items():
@@ -95,9 +97,11 @@ def main():
     # Infinitely read stdin to stall main thread while the bot runs in other threads
     while True:
         serial = input()
-        if serial == 'q':
-            quit()
+        print(serial)
+        if 'q' in serial:
+            break
 
-
+    quit()
+    
 if __name__ == "__main__":
     main()

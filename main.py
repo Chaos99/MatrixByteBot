@@ -69,6 +69,8 @@ def dieroll_callback(room, event):
 
 
 def main():
+    plugins = []
+
     # Create an instance of the MatrixBotAPI
     mainLog.debug("main() started, trying to initialize")
     mainLog.debug("MatrixBot initializing with room {}".format(ROOM))
@@ -76,11 +78,12 @@ def main():
 
     # Add a regex handler waiting for the word 
     mainLog.debug("Creating HiPlugin")
-    hiplug = HiPlugin("SayHi-Plugin", bot)
+    plugins.append(HiPlugin("SayHi-Plugin", bot))
     
     for room_id, room in bot.client.get_rooms().items():
-        mainLog.debug("Registering plugin in room {}".format(room_id))
-        room.add_listener(hiplug.handle_message)
+        mainLog.debug("Registering plugins in room {}".format(room_id))
+        for plugin in plugins:
+            room.add_listener(plugin.handle_message)
     
     # Start polling
     bot.start_polling()

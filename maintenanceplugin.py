@@ -64,5 +64,5 @@ class MaintenancePlugin(Plugin):
     def getHelp(self):
         return("Returns version info on !version\n"
                "Lists available plugins on !list\n"
-               "Reports last startupt time with !uptime\n")
+               "Reports time since last startup with !uptime\n")
      

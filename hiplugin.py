@@ -14,11 +14,14 @@ class HiPlugin(Plugin):
         hiLog.debug("Creating HiPlugin")
         Plugin.__init__(self, name, bot)
         hiLog.debug("Adding matcher for 'Hi'")
-        Plugin.addMatcher(self, re.compile("!Hi"))
-        Plugin.addMatcher(self, re.compile("!Hello"))
+        Plugin.addMatcher(self, re.compile("![Hh]i"))
+        Plugin.addMatcher(self, re.compile("![Hh]ello"))
         
     def callback(self, room, event):
-     # Somebody said hi, let's say Hi back
-     hiLog.debug("{} sends response".format(self.name))
-     room.send_text("Hi, " + event['sender'])
+        # Somebody said hi, let's say Hi back
+        hiLog.debug("{} sends response".format(self.name))
+        room.send_text("Hi, " + event['sender'])
+     
+    def getHelp(self):
+        return("Answers friendly on anything starting with !Hi or !Hello")
      

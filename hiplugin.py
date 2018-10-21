@@ -14,7 +14,8 @@ class HiPlugin(Plugin):
         hiLog.debug("Creating HiPlugin")
         Plugin.__init__(self, name, bot)
         hiLog.debug("Adding matcher for 'Hi'")
-        Plugin.addMatcher(self, re.compile("Hi"))
+        Plugin.addMatcher(self, re.compile("!Hi"))
+        Plugin.addMatcher(self, re.compile("!Hello"))
         
     def callback(self, room, event):
      # Somebody said hi, let's say Hi back

@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.1.0
+- fixed login
+- first working prototype
+
+## 0.0.5
+- added logging for debugging
+- moved pw in non-version-controled file
+
 ## 0.0.4
 - implementing own bot class based on bot-api example with mixed client/api access for login
 - works in interactive shell, still fails in script

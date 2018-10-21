@@ -15,6 +15,8 @@ logging.getLogger("urllib3").setLevel(logging.WARNING)
 
 mainLog = logging.getLogger('MainLog')
 
+from hiplugin import HiPlugin
+
 from matrix_bot_api.matrix_bot_api import MatrixBotAPI
 from matrix_bot_api.mregex_handler import MRegexHandler
 from matrix_bot_api.mcommand_handler import MCommandHandler
@@ -32,9 +34,6 @@ try:
 except ImportError:
    pass
 
-def hi_callback(room, event):
-    # Somebody said hi, let's say Hi back
-    room.send_text("Hi, " + event['sender'])
 
 
 def echo_callback(room, event):
@@ -75,20 +74,16 @@ def main():
     mainLog.debug("MatrixBot initializing with room {}".format(ROOM))
     bot = MatrixBot(USERNAME, PASSWORD, SERVER, ROOM)
 
-    # Add a regex handler waiting for the word Hi
-    hi_handler = MRegexHandler("Hi", hi_callback)
-    #bot.add_handler(hi_handler)
-
-    # Add a regex handler waiting for the echo command
-    echo_handler = MCommandHandler("echo", echo_callback)
-    #bot.add_handler(echo_handler)
-
-    # Add a regex handler waiting for the die roll command
-    dieroll_handler = MCommandHandler("d", dieroll_callback)
-    #bot.add_handler(dieroll_handler)
-
+    # Add a regex handler waiting for the word 
+    mainLog.debug("Creating HiPlugin")
+    hiplug = HiPlugin("SayHi-Plugin", bot)
+    
+    for room_id, room in bot.client.get_rooms().items():
+        mainLog.debug("Registering plugin in room {}".format(room_id))
+        room.add_listener(hiplug.handle_message)
+    
     # Start polling
-    #bot.start_polling()
+    bot.start_polling()
     
     bot.send("Startup successful")
 

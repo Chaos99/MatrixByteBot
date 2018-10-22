@@ -7,6 +7,9 @@ name = "pypi"
 matrix-client = "*"
 spyder-kernels = "<=1.0"
 spyder = "*"
+pytz = "*"
+icalendar = "*"
+aiohttp = "*"
 
 [dev-packages]
 

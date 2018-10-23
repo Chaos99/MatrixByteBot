@@ -8,6 +8,7 @@ import logging
 
 from plugin import Plugin
 
+import asyncio
 import aiohttp
 import time
 
@@ -34,22 +35,22 @@ class DatesPlugin(Plugin):
         self.bot = bot #safe for later use
         self.help_text = ""
         self.first_run = True
-        
-        self._update_cache()
+        self.loop = asyncio.get_event_loop()
+        #self._update_cache()
    
     def callback(self, room, event):
         """send collected help messages"""
         DATES_LOG.debug("%s sends response", self.name)
         self.room = room
-        self.dates()
-        room.send_text(self.collect_help())
+        self.loop.call_soon(self.dates())
+        #room.send_text(self.collect_help())
 
     def get_help(self):
         """Return help text"""
         return "Prints Bytespeicher calendar entries at !dates"
 
 
-    def dates(self):
+    async def dates(self):
         """Show the planned dates within the next days
     
             %%dates
@@ -59,9 +60,10 @@ class DatesPlugin(Plugin):
                                         minute=0,
                                         second=0,
                                         microsecond=0)
-    
-        yield from _update_cache()
-        yield from output_dates(now,
+        
+        await self._update_cache()
+        
+        self.output_dates(now,
                                 now + timedelta(days=21),
                                 'Bytespeicher')
     
@@ -273,17 +275,19 @@ class DatesPlugin(Plugin):
             raise Exception()
     
     
-    def _update_cache(self):
+    async def _update_cache(self):
         """Update cached ical file"""
         URL = 'http://www.google.com/calendar/ical/2eskb61g20prl65k2qd01uktis%40group.calendar.google.com/public/basic.ics'
         try:
             """Request the ical file."""
-            with aiohttp.Timeout(10):
-                with aiohttp.ClientSession(loop=self.loop) as session:
-                    resp = yield from session.get(URL)
+            async with aiohttp.ClientSession() as session:
+                DATES_LOG.debug("ClientSession created")
+                async with session.get(URL) as resp:
+                    DATES_LOG.debug("URL requested")
                     if resp.status == 200:
                         """Get text content from http request."""
-                        r = yield from resp.text()
+                        DATES_LOG.debug("Get text")
+                        r = await resp.text()
                     else:
                         self.room.send_text("Error while retrieving calendar data")
                         raise Exception()

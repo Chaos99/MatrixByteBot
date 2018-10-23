@@ -10,6 +10,7 @@ spyder = "*"
 pytz = "*"
 icalendar = "*"
 aiohttp = "*"
+asyncio = "*"
 
 [dev-packages]
 

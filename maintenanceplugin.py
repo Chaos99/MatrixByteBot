@@ -22,42 +22,66 @@ class MaintenancePlugin(Plugin):
         Plugin.add_matcher(self, re.compile("![Vv]ersion"))
         Plugin.add_matcher(self, re.compile("![Ll]ist"))
         Plugin.add_matcher(self, re.compile("![Uu]ptime"))
+        Plugin.add_matcher(self, re.compile("![Hh]istory"))
 
         self.bot = bot #safe for later use
-        self.first_run = True
-        self.plugin_names = ""
-
+        self.first_run = {'plugins':True,
+                          'version':True,
+                          'history':True}
+        
+        self.plugin_names = "names could not be read"
         self.version = "no version set"
+        self.history = "history could not be read"
 
         self.start_time = datetime.datetime.now()
 
     def collect_plugins(self):
         """traverse plugin list in bot an get names"""
-        if not self.first_run:
+        if not self.first_run['plugins']:
             pass
         else:
+            self.plugin_names=""
             for plugin in self.bot.plugins:
                 self.plugin_names += (plugin.name + '\n')
-            self.first_run = False
+            self.first_run['plugins'] = False
         return self.plugin_names
 
     def get_version(self):
         """ get version number from topmost entry in CHANGELOG.mf"""
-        if not self.first_run:
+        if not self.first_run['version']:
             pass
-        else:
+        else:            
             pattern = re.compile(r'##\s*(.*)')
             for line in open('CHANGELOG.md'):
                 match = re.match(pattern, line)
                 if match is not None:
                     self.version = match.group(1)
                     break #stop at first match
+            self.first_run['version'] = False
         return self.version
 
     def get_uptime(self):
         """ calculate uotime since start"""
         uptime = datetime.datetime.now() - self.start_time
         return str(uptime)
+    
+    def get_history(self):
+        """ extract a few lines from the CHANGELOG file"""
+        length = 9
+        if not self.first_run['history']:
+            pass
+        else:
+            pattern = re.compile(r'##\s*(.*)')
+            with open('CHANGELOG.md') as file:
+                lines = file.readlines()
+                for i,line in enumerate(lines):
+                    if pattern.match(line):
+                        to = i + length if ((i+length)<len(lines)) else (len(lines)-1)
+                        MTN_LOG.debug("Found %s, printing lines %d to %d", line[:-1], i, to)
+                        self.history = lines[i:to]
+                        break #stop at first match
+                self.first_run['history'] = False                
+        return "".join(self.history)
 
     def callback(self, room, event):
         """ collect info based on input match"""
@@ -68,9 +92,12 @@ class MaintenancePlugin(Plugin):
             room.send_text(self.collect_plugins())
         if re.compile("![Uu]ptime").match(event['content']['body']):
             room.send_text(self.get_uptime())
+        if re.compile("![Hh]istory").match(event['content']['body']):
+            room.send_text(self.get_history())
 
     def get_help(self):
         """Return help text"""
         return ("Returns version info on !version\n"
                 "Lists available plugins on !list\n"
-                "Reports time since last startup with !uptime\n")
+                "Reports time since last startup with !uptime\n"
+                "Give last few lines of changelog with !history")

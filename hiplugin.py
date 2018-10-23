@@ -14,7 +14,7 @@ class HiPlugin(Plugin):
         HI_LOG.debug("Creating HiPlugin")
         Plugin.__init__(self, name, bot)
         HI_LOG.debug("Adding matcher for 'Hi'")
-        Plugin.add_matcher(self, re.compile("![Hh]i"))
+        Plugin.add_matcher(self, re.compile("![Hh]i[^A-Za-z0-9]*"))
         Plugin.add_matcher(self, re.compile("![Hh]ello"))
 
     def callback(self, room, event):

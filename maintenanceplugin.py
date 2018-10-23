@@ -40,6 +40,7 @@ class MaintenancePlugin(Plugin):
         if not self.first_run['plugins']:
             pass
         else:
+            self.plugin_names=""
             for plugin in self.bot.plugins:
                 self.plugin_names += (plugin.name + '\n')
             self.first_run['plugins'] = False
@@ -66,7 +67,7 @@ class MaintenancePlugin(Plugin):
     
     def get_history(self):
         """ extract a few lines from the CHANGELOG file"""
-        length = 6
+        length = 9
         if not self.first_run['history']:
             pass
         else:
@@ -75,11 +76,12 @@ class MaintenancePlugin(Plugin):
                 lines = file.readlines()
                 for i,line in enumerate(lines):
                     if pattern.match(line):
-                        until = i + length if ((i+length)<len(lines)) else (len(lines)-1)
-                        self.history = lines[i:until]
+                        to = i + length if ((i+length)<len(lines)) else (len(lines)-1)
+                        MTN_LOG.debug("Found %s, printing lines %d to %d", line[:-1], i, to)
+                        self.history = lines[i:to]
                         break #stop at first match
                 self.first_run['history'] = False                
-        return self.history
+        return "".join(self.history)
 
     def callback(self, room, event):
         """ collect info based on input match"""
@@ -90,11 +92,12 @@ class MaintenancePlugin(Plugin):
             room.send_text(self.collect_plugins())
         if re.compile("![Uu]ptime").match(event['content']['body']):
             room.send_text(self.get_uptime())
-        if re.compile("!Hi]istory").match(event['content']['body']):
+        if re.compile("![Hh]istory").match(event['content']['body']):
             room.send_text(self.get_history())
 
     def get_help(self):
         """Return help text"""
         return ("Returns version info on !version\n"
                 "Lists available plugins on !list\n"
-                "Reports time since last startup with !uptime\n")
+                "Reports time since last startup with !uptime\n"
+                "Give last few lines of changelog with !history")

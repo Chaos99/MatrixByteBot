@@ -47,8 +47,10 @@ def main():
     bot.add_plugin(HelpPlugin("Help-Plugin", bot))
     bot.add_plugin(MaintenancePlugin("Maintenance-Plugin", bot))
 
+    rooms=[]
     for room_id, room in bot.client.get_rooms().items():
         MAIN_LOG.debug("Registering plugins in room %s", room_id)
+        rooms.append(room)
         for plugin in bot.plugins:
             room.add_listener(plugin.handle_message)
 
@@ -62,6 +64,8 @@ def main():
         serial = input()
         print(serial)
         if 'q' in serial:
+            for room in rooms:
+                room.send_text("I was summond back to the workbech. Bye!")
             break
 
     quit()

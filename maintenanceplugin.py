@@ -25,10 +25,13 @@ class MaintenancePlugin(Plugin):
         Plugin.add_matcher(self, re.compile("![Hh]istory"))
 
         self.bot = bot #safe for later use
-        self.first_run = {plugins:True, version:True, history:True}
-        self.plugin_names = ""
-
+        self.first_run = {'plugins':True,
+                          'version':True,
+                          'history':True}
+        
+        self.plugin_names = "names could not be read"
         self.version = "no version set"
+        self.history = "history could not be read"
 
         self.start_time = datetime.datetime.now()
 
@@ -63,17 +66,20 @@ class MaintenancePlugin(Plugin):
     
     def get_history(self):
         """ extract a few lines from the CHANGELOG file"""
+        length = 6
         if not self.first_run['history']:
             pass
         else:
             pattern = re.compile(r'##\s*(.*)')
-            for line in open('CHANGELOG.md'):
-                match = re.match(pattern, line)
-                if match is not None:
-                    self.version = match.group(1)
-                    break #stop at first match
-            self.first_run['history'] = False
-        return self.version
+            with open('CHANGELOG.md') as file:
+                lines = file.readlines()
+                for i,line in enumerate(lines):
+                    if pattern.match(line):
+                        until = i + length if ((i+length)<len(lines)) else (len(lines)-1)
+                        self.history = lines[i:until]
+                        break #stop at first match
+                self.first_run['history'] = False                
+        return self.history
 
     def callback(self, room, event):
         """ collect info based on input match"""

@@ -1,68 +1,78 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Sat Oct 20 16:02:38 2018
+""" Main matrix bot that handles server connection, keeps plugin list
+and registers them as listeners"""
 
-@author: ssc
-"""
 import logging
-botLog = logging.getLogger('BotLog')
+from urllib.parse import urlparse
 
 from matrix_client.client import MatrixClient
 from matrix_client.api import MatrixHttpApi
-from urllib.parse import urlparse
+
+BOT_LOG = logging.getLogger('BotLog')
 
 class MatrixBot:
+    """The main bot, connecting to the server and handling plugins"""
     def __init__(self, username, password, server, roomId):
         self.username = username
         self.fullname = "@"+str(username).lower()+':'+urlparse(server).hostname
-        self.plugins=[]
+        self.plugins = []
         # Connect to server
-        botLog.debug("creating matrix client for server {}".format( server))
+        BOT_LOG.debug("creating matrix client for server %s", server)
         self.client = MatrixClient(server)
         try:
-            botLog.debug("Trying to log in as {} pw: {}".format(username, "".join(['*' for p in password])))
+            BOT_LOG.debug("Trying to log in as %s pw: %s",
+                          username, "".join(['*' for p in password]))
             self.token = self.client.login_with_password(username, password)
-            botLog.debug("Got Token {}..{}".format( self.token[0:3], self.token[-3:-1]))
+            BOT_LOG.debug("Got Token %s..%s", self.token[0:3], self.token[-3:-1])
         except Exception as e:
-            botLog.error("Login Failed: {}".format(e))
-            return(None)
+            BOT_LOG.error("Login Failed: %s", e)
+            return None
         #this is a second connection with different interface
-        botLog.debug("Creating matrix API endpoint")        
+        BOT_LOG.debug("Creating matrix API endpoint")
         self.api = MatrixHttpApi(server, self.token)
-        botLog.debug("Syncing..")
+        BOT_LOG.debug("Syncing..")
         self.api.sync()
-        if str(roomId).startswith('!'):            
-            self.currentRoom = roomId
+        if str(roomId).startswith('!'):
+            self.current_room = roomId
         else:
-            self.currentRoom = self.getRoomIdByName(roomId)
-        botLog.debug("Joining room with id {}".format( self.currentRoom))            
-        self.api.join_room(self.currentRoom)
-        
-        botLog.debug("Getting member info")
-        self.members = self.api.get_room_members(self.currentRoom)
-        botLog.debug("Members in room: {}".format(",".join([a['sender'] if 'sender' in a.keys() else "" for a in self.members['chunk']])))
-        #self.rooms = 
-    
-    def addPlugin(self, plugin):
+            self.current_room = self.get_room_id_by_name(roomId)
+        BOT_LOG.debug("Joining room with id %s", self.current_room)
+        self.api.join_room(self.current_room)
+
+        BOT_LOG.debug("Getting member info")
+        self.members = self.api.get_room_members(self.current_room)
+        BOT_LOG.debug("Members in room: %s",
+                      ",".join([a['sender']
+                                if 'sender' in a.keys() else ""
+                                for a in self.members['chunk']]))
+        #self.rooms =
+        return None
+
+    def add_plugin(self, plugin):
+        """Puts a plugin in the internal list
+        where it will be registered as a listener"""
         self.plugins.append(plugin)
-    
-    def getRoomIdByName(self, name):
-        botLog.debug("Getting room ID for name '{}'".format(name))
+
+    def get_room_id_by_name(self, name):
+        """Translate human-readable room name into internal room id"""
+        BOT_LOG.debug("Getting room ID for name '%s'", name)
         try:
             if str(name).startswith('#'):
                 rid = self.api.get_room_id(name)
             else:
                 rid = self.api.get_room_id('#' + name)
-        except Exception as e:
-            botLog.warning("Room name '{}' not found".format(name))
+        except Exception:
+            BOT_LOG.warning("Room name '%s' not found", name)
             rid = ""
         return rid
-    
+
     def send(self, text):
-        botLog.debug("Sending sample text to room")
-        self.api.send_message(self.currentRoom, text)
-        
+        """Sending initial message to room to announce startup"""
+        BOT_LOG.debug("Sending sample text to room")
+        self.api.send_message(self.current_room, text)
+
     def start_polling(self):
+        """Starts syncing and polling for new messages in a new thread"""
         # Starts polling for messages
         self.client.start_listener_thread()
         return self.client.sync_thread

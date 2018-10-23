@@ -1,43 +1,51 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun Oct 21 01:05:57 2018
-
-@author: ssc
+Plugin that collects help messages
+from all other plugins and displays them
 """
 
-import re, logging
-helpLog = logging.getLogger('HelpPluginLog')
+import re
+import logging
 
 from plugin import Plugin
 
+HELP_LOG = logging.getLogger('HelpPluginLog')
+
 class HelpPlugin(Plugin):
+    """Collects help messages
+    from all other plugins and displays them"""
+
     def __init__(self, name, bot):
-        helpLog.debug("Creating HelpPlugin")
+        HELP_LOG.debug("Creating HelpPlugin")
         Plugin.__init__(self, name, bot)
-        helpLog.debug("Adding matcher for '!Help'")
-        Plugin.addMatcher(self, re.compile("![Hh]elp"))
-        
-        self.bot=bot #safe for later use
-        self.helptext=""
-        self.firstrun = True
-        
-    def collectHelp(self):
-        if not self.firstrun:
-            return self.helptext
+        HELP_LOG.debug("Adding matcher for '!Help'")
+        Plugin.add_matcher(self, re.compile("![Hh]elp"))
+
+        self.bot = bot #safe for later use
+        self.help_text = ""
+        self.first_run = True
+
+    def collect_help(self):
+        """collect help messages from all plugins in the bot's list
+        if called for the first time; else return cached value"""
+
+        if not self.first_run:
+            pass #already cached
         else:
             for plugin in self.bot.plugins:
-                helpLog.debug("Adding help text for {}".format(plugin.name))
-                self.helptext += ('**' + plugin.name + '**\n')
-                self.helptext += (plugin.getHelp() + '\n')
-                self.helptext += "\n"
-            self.firstrun = False
-            return self.helptext            
-        
+                HELP_LOG.debug("Adding help text for %s", plugin.name)
+                self.help_text += ('**' + plugin.name + '**\n')
+                self.help_text += (plugin.get_help() + '\n')
+                self.help_text += "\n"
+            self.first_run = False
+
+        return self.help_text
+
     def callback(self, room, event):
-         # Somebody said hi, let's say Hi back
-         helpLog.debug("{} sends response".format(self.name))
-         room.send_text(self.collectHelp())
-     
-    def getHelp(self):
-        return("Prints this help text on !help")
-     
+        """send collected help messages"""
+        HELP_LOG.debug("%s sends response", self.name)
+        room.send_text(self.collect_help())
+
+    def get_help(self):
+        """Return help text"""
+        return "Prints this help text on !help"

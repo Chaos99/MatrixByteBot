@@ -22,9 +22,6 @@ Implementing standard and maintenance plugins
   - Inside a python virtual environment:
     - the matrix sdk package https://github.com/matrix-org/matrix-python-sdk 
 
-  - As git submodule:
-    the matrix bot api https://github.com/shawnanastasio/python-matrix-bot-api
-
 ## Usage instructions
 1. Create private_settings.py with a single line ```PASSWORD = "yourpassword"```
 2. update USERNAME, SERVER and ROOM in main.py near the top
@@ -35,3 +32,6 @@ See LICENSE file for GPLv3 license of this software.
 
 Uses (but does not include) packages and source code listed above.
 Links to original sources are given as documentation and credit to the authors.
+
+The matrix bot api at https://github.com/shawnanastasio/python-matrix-bot-api
+was part of this project but has since been removed.

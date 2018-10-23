@@ -235,10 +235,6 @@
             ],
             "version": "==1.0"
         },
-        "matrix-bot-api": {
-            "editable": true,
-            "path": "./python-matrix-bot-api"
-        },
         "matrix-client": {
             "hashes": [
                 "sha256:2855a2614a177db66f9bc3ba38cbd2876041456f663c334f72a160ab6bb11c49",

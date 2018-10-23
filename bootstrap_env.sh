@@ -12,4 +12,3 @@ pipenv install   # installs all dependencies based on pipfile
 
 # manual installation
 #pipenv install matrix-client
-#pipenv install -e python-matrix-bot-api

@@ -1,33 +1,42 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sat Oct 20 23:13:53 2018
-
-@author: ssc
+Virtual base class for all plugins.
+Handles regex and checking incomming messages for matches
 """
-import logging, re, traceback
-pluginLog = logging.getLogger('PluginLog')
+import logging
+import re
+import traceback
+
+PLUGIN_LOG = logging.getLogger('PluginLog')
 
 class Plugin:
+    """(Virtual) base class for Plugins"""
     def __init__(self, name, bot):
         self.name = name
         self.bot = bot
         self.rooms = []
         self.matchers = []
-        pluginLog.debug("Loading Plugin {}".format(name))
-        pluginLog.debug("Set up filtering for {}".format(self.bot.fullname))
-        
-    def addMatcher(self, compiledRe):
-        pluginLog.debug("Adding RegEx {} to {}".format(compiledRe, self.name))
-        self.matchers.append(compiledRe)
+        PLUGIN_LOG.debug("Loading Plugin %s", name)
+        PLUGIN_LOG.debug("Set up filtering for %s", self.bot.fullname)
+
+    def add_matcher(self, compiled_re):
+        """Add a (compiled) regular expression
+        for which the plugin should listen"""
+
+        PLUGIN_LOG.debug("Adding RegEx %s to %s", compiled_re, self.name)
+        self.matchers.append(compiled_re)
 
     def handle_message(self, room, event):
+        """Parses incomming messages, matches with regex and decides
+        if callback is called"""
+
         # Make sure we didn't send this message
         try:
-            pluginLog.debug("Handling message {}:{}".format(event['sender'], event['content']['body']))
+            PLUGIN_LOG.debug("Handling message %s:%s", event['sender'], event['content']['body'])
         except Exception as e:
-            pluginLog.debug("Message {} caused exception {}".format(event, e))
+            PLUGIN_LOG.debug("Message %s caused exception %s", event, e)
         if re.match(self.bot.fullname, event['sender']):
-            pluginLog.debug("Discarded because self-sent")
+            PLUGIN_LOG.debug("Discarded because self-sent")
             return
 
         # Loop through all installed handlers and see if they need to be called
@@ -35,33 +44,18 @@ class Plugin:
             for matcher in self.matchers:
                 if matcher.match(event['content']['body']):
                     # This handler needs to be called
-                    pluginLog.debug("Match found with {}".format(matcher))
+                    PLUGIN_LOG.debug("Match found with %s", matcher)
                     try:
                         self.callback(room, event)
-                    except:
+                    except Exception:
                         traceback.print_exc()
         else:
-            pluginLog.debug("Discarded because not room message")
+            PLUGIN_LOG.debug("Discarded because not room message")
 
-    def handle_invite(self, room_id, state):
-        pluginLog.debug("Got invite to room: {}".format(room_id))
-        pluginLog.debug("Joining...")
-        room = self.bot.client.join_room(room_id)
-
-        # Add message callback for this room
-        room.add_listener(self.handle_message)
-
-        # Add room to list
-        self.rooms.append(room)
-
-    def start_polling(self):
-        # Starts polling for messages
-        pluginLog.debug("{} starts polling".format(self.name))
-        self.bot.client.start_listener_thread()
-        return self.bot.client.sync_thread
-    
-    def callback(self):
+    def callback(self, room, event):
+        """ Pure Virtual: Overwrite with callback (e.g. what to do)"""
         raise NotImplementedError('You need to define a "callback()" method!')
 
-    def getHelp(self):
+    def get_help(self):
+        """ Pure Virtual: return help text string for plugin"""
         raise NotImplementedError('You need to define a "getHelp()" method!')

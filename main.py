@@ -8,6 +8,7 @@ Test it out by adding it to a group chat and doing one of the following:
 """
 
 import logging
+import asyncio
 
 from matrixbot import MatrixBot
 
@@ -22,14 +23,14 @@ logging.getLogger("urllib3").setLevel(logging.WARNING)
 
 MAIN_LOG = logging.getLogger('MainLog')
 
-# Global variables
-USERNAME = "MatrixBotAlpha"  # Bot's username
-PASSWORD = ""  # Bot's password
-SERVER = "https://erfurt.chat"  # Matrix server URL
-ROOM = "#bot_test:erfurt.chat"
+USERNAME = ""  # Bot's username (see private_settings.py)
+PASSWORD = ""  # Bot's password (see private_settings.py)
+SERVER = ""  # Matrix server URL (see private_settings.py)
+ROOM = "" # Room name (see private_settings.py)
 
+# import username, password, server and room name from external file
 try:
-    from private_settings import PASSWORD
+    from private_settings import PASSWORD, USERNAME, SERVER, ROOM
 except ImportError:
     pass
 
@@ -56,6 +57,7 @@ def main():
 
     # Start polling
     bot.start_polling()
+        
 
     bot.send("Startup successful")
 
@@ -66,6 +68,10 @@ def main():
         if 'q' in serial:
             for room in rooms:
                 room.send_text("I was summond back to the workbech. Bye!")
+            break
+        if 'u' in serial:
+            for room in rooms:
+                room.send_text("I'm sensing an upstream update, be right back.")
             break
 
     quit()

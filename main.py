@@ -8,7 +8,6 @@ Test it out by adding it to a group chat and doing one of the following:
 """
 
 import logging
-import asyncio
 
 from matrixbot import MatrixBot
 
@@ -50,7 +49,7 @@ def main():
     bot.add_plugin(MaintenancePlugin("Maintenance-Plugin", bot))
     bot.add_plugin(DatesPlugin("Dates-Plugin", bot))
 
-    rooms=[]
+    rooms = []
     for room_id, room in bot.client.get_rooms().items():
         MAIN_LOG.debug("Registering plugins in room %s", room_id)
         rooms.append(room)
@@ -59,7 +58,6 @@ def main():
 
     # Start polling
     bot.start_polling()
-        
 
     bot.send("Startup successful")
 

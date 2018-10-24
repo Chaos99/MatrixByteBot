@@ -15,7 +15,6 @@ from matrixbot import MatrixBot
 from hiplugin import HiPlugin
 from helpplugin import HelpPlugin
 from maintenanceplugin import MaintenancePlugin
-from datesplugin import DatesPlugin
 
 # logging configuration
 logging.basicConfig(level=logging.DEBUG)
@@ -31,7 +30,7 @@ ROOM = "" # Room name (see private_settings.py)
 
 # import username, password, server and room name from external file
 try:
-    from private_settings import PASSWORD
+    from private_settings import PASSWORD, USERNAME, SERVER, ROOM
 except ImportError:
     pass
 
@@ -48,7 +47,6 @@ def main():
     bot.add_plugin(HiPlugin("SayHi-Plugin", bot))
     bot.add_plugin(HelpPlugin("Help-Plugin", bot))
     bot.add_plugin(MaintenancePlugin("Maintenance-Plugin", bot))
-    bot.add_plugin(DatesPlugin("Dates-Plugin", bot))
 
     rooms=[]
     for room_id, room in bot.client.get_rooms().items():

@@ -35,12 +35,21 @@ Implementing standard and maintenance plugins
 ## Licenses
 See LICENSE file for GPLv3 license of this software.
 
-Uses (but does not include) packages and source code listed above.
+Uses (but not includes) packages and libraries as listed above.
 Links to original sources are given as documentation and credit to the authors.
 
+Includes:
 Uses Scriptacular - gitupdate.sh
 Copyright 2013 Christopher Simpkins
 MIT License
 
-The matrix bot api at https://github.com/shawnanastasio/python-matrix-bot-api
-was part of this project but has since been removed.
+Based on (and contains snipets of code from) 
+https://github.com/Bytespeicher/Bytebot
+MIT License
+
+See LICENCSE_MIT file for the license text.
+
+The matrix bot api at 
+https://github.com/shawnanastasio/python-matrix-bot-api
+GPLv3 License
+was part of this project but has since been completely removed.

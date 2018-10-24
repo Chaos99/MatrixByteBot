@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.1.9
+- publish license of base code
+
 ## 0.1.8
 - added start/stop/update linux script for CI
 - moved username/server/room to per-user settings file

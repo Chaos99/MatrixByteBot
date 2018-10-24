@@ -8,9 +8,9 @@ import logging
 
 from plugin import Plugin
 
-import asyncio
-import aiohttp
 import time
+
+import urllib.request
 
 from datetime import datetime, timedelta
 from dateutil.rrule import rruleset, rrulestr
@@ -35,14 +35,13 @@ class DatesPlugin(Plugin):
         self.bot = bot #safe for later use
         self.help_text = ""
         self.first_run = True
-        self.loop = asyncio.get_event_loop()
         #self._update_cache()
    
     def callback(self, room, event):
         """send collected help messages"""
         DATES_LOG.debug("%s sends response", self.name)
         self.room = room
-        self.loop.call_soon(self.dates())
+        self.dates()
         #room.send_text(self.collect_help())
 
     def get_help(self):
@@ -50,7 +49,7 @@ class DatesPlugin(Plugin):
         return "Prints Bytespeicher calendar entries at !dates"
 
 
-    async def dates(self):
+    def dates(self):
         """Show the planned dates within the next days
     
             %%dates
@@ -61,7 +60,7 @@ class DatesPlugin(Plugin):
                                         second=0,
                                         microsecond=0)
         
-        await self._update_cache()
+        self._update_cache()
         
         self.output_dates(now,
                                 now + timedelta(days=21),
@@ -97,7 +96,7 @@ class DatesPlugin(Plugin):
         """
     
         try:
-            file = open('/tmp/dates.cache')
+            file = open('tmp/dates.cache')
             r = file.read()
         except OSError as e:
             raise Exception(e)
@@ -275,22 +274,22 @@ class DatesPlugin(Plugin):
             raise Exception()
     
     
-    async def _update_cache(self):
+    def _update_cache(self):
         """Update cached ical file"""
         URL = 'http://www.google.com/calendar/ical/2eskb61g20prl65k2qd01uktis%40group.calendar.google.com/public/basic.ics'
         try:
             """Request the ical file."""
-            async with aiohttp.ClientSession() as session:
-                DATES_LOG.debug("ClientSession created")
-                async with session.get(URL) as resp:
-                    DATES_LOG.debug("URL requested")
-                    if resp.status == 200:
-                        """Get text content from http request."""
-                        DATES_LOG.debug("Get text")
-                        r = await resp.text()
-                    else:
-                        self.room.send_text("Error while retrieving calendar data")
-                        raise Exception()
+            with urllib.request.urlopen(URL) as resp:
+                DATES_LOG.debug("URL requested")
+                if resp.status == 200:
+                    """Get text content from http request."""
+                    DATES_LOG.debug("Get text")
+                    r_raw = resp.read()
+                    encoding = resp.headers.get_content_charset('utf-8')
+                    r = r_raw.decode(encoding)
+                else:
+                    self.room.send_text("Error while retrieving calendar data")
+                    raise Exception()
     
         except Exception as e:
             DATES_LOG.error(e)
@@ -298,7 +297,7 @@ class DatesPlugin(Plugin):
     
         try:
             """ Save ical cache to disk """
-            cache = open('/tmp/dates.cache', "w")
+            cache = open('tmp/dates.cache', "w")
             cache.truncate(0)
             cache.write('%s' % r)
             cache.close()

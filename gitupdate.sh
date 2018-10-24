@@ -4,7 +4,7 @@
 # Copyright 2013 Christopher Simpkins
 # MIT License
 
-#run in directory of script
+#run in directory of script to make relative command paths work
 cd "${0%/*}"
 
 # Default to working directory

@@ -9,7 +9,8 @@
 ## Status
 ~~Concept phase and build environment setup~~
 ~~Prototyping login and triggering~~
-Implementing standard and maintenance plugins
+~~Implementing standard and maintenance plugins~~
+Re-implementing IRC-Bot plugins
 
 ## Build instructions
 ### build environment
@@ -22,6 +23,7 @@ Implementing standard and maintenance plugins
   
   - Inside a python virtual environment:
     - the matrix sdk package https://github.com/matrix-org/matrix-python-sdk 
+    - schedule package https://pypi.org/project/schedule/
 
 ## Usage instructions
 1. Change private_settings.py with username, password, servername and room
@@ -32,16 +34,20 @@ Implementing standard and maintenance plugins
 6. use ./stop.sh to stop the process (but keep the tmux session)
 7. use 'tmux kill-session -t bytebot' to also close the session
 
-## Licenses
+## License and Credits
 See LICENSE file for GPLv3 license of this software.
 
-Uses (but not includes) packages and libraries as listed above.
+Uses (but not includes) packages and libraries as listed above and below.
 Links to original sources are given as documentation and credit to the authors.
 
-Includes:
-Uses Scriptacular - gitupdate.sh
+Uses 
+Scriptacular - gitupdate.sh
 Copyright 2013 Christopher Simpkins
 MIT License
+
+schedule python package https://pypi.org/project/schedule/
+Daniel Bader - @dbader_org - mail@dbader.org
+MIT license
 
 Based on (and contains snipets of code from) 
 https://github.com/Bytespeicher/Bytebot

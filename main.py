@@ -8,18 +8,19 @@ Test it out by adding it to a group chat and doing one of the following:
 """
 
 import logging
-import asyncio
 
 from matrixbot import MatrixBot
 
 from hiplugin import HiPlugin
 from helpplugin import HelpPlugin
 from maintenanceplugin import MaintenancePlugin
+from datesplugin import DatesPlugin
 
 # logging configuration
 logging.basicConfig(level=logging.DEBUG)
 logging.getLogger("requests").setLevel(logging.WARNING)
 logging.getLogger("urllib3").setLevel(logging.WARNING)
+logging.getLogger("PluginLog").setLevel(logging.WARNING)
 
 MAIN_LOG = logging.getLogger('MainLog')
 
@@ -42,22 +43,16 @@ def main():
     MAIN_LOG.debug("MatrixBot initializing with room %s", ROOM)
     bot = MatrixBot(USERNAME, PASSWORD, SERVER, ROOM)
 
-    # Add a regex handler waiting for the word
-    MAIN_LOG.debug("Creating HiPlugin")
+    # Add plugins to the bot 
     bot.add_plugin(HiPlugin("SayHi-Plugin", bot))
     bot.add_plugin(HelpPlugin("Help-Plugin", bot))
     bot.add_plugin(MaintenancePlugin("Maintenance-Plugin", bot))
-
-    rooms=[]
-    for room_id, room in bot.client.get_rooms().items():
-        MAIN_LOG.debug("Registering plugins in room %s", room_id)
-        rooms.append(room)
-        for plugin in bot.plugins:
-            room.add_listener(plugin.handle_message)
+    bot.add_plugin(DatesPlugin("Dates-Plugin", bot))
+            
+    bot.register_listeners()
 
     # Start polling
     bot.start_polling()
-        
 
     bot.send("Startup successful")
 
@@ -74,6 +69,7 @@ def main():
                 room.send_text("I'm sensing an upstream update, be right back.")
             break
 
+    bot.stop_scheduler()
     quit()
 
 if __name__ == "__main__":

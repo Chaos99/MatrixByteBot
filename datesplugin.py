@@ -37,6 +37,10 @@ class DatesPlugin(Plugin):
         self.first_run = True
         self.room = None
         #self._update_cache()
+        bot.schedule.every(1).minutes.do(self.test)
+
+    def test(self):
+        self.room.send_text("1min gone")
 
     def callback(self, room, event):
         """send collected help messages"""

@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "2ccec3a221a9c0884456b14618f97a8f06fa956bf5613fa43a35b5c53362f861"
+            "sha256": "4daf0001f639f8d0753a454ec878fc0a1708ad2ab0a957247c98f2dc040e14c2"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -481,11 +481,11 @@
         },
         "pytz": {
             "hashes": [
-                "sha256:a061aa0a9e06881eb8b3b2b43f05b9439d6583c206d0a6c340ff72a7b6669053",
-                "sha256:ffb9ef1de172603304d9d2819af6f5ece76f2e85ec10692a524dd876e72bf277"
+                "sha256:642253af8eae734d1509fc6ac9c1aee5e5b69d76392660889979b9870610a46b",
+                "sha256:91e3ccf2c344ffaa6defba1ce7f38f97026943f675b7703f44789768e4cb0ece"
             ],
             "index": "pypi",
-            "version": "==2018.5"
+            "version": "==2018.6"
         },
         "pywin32-ctypes": {
             "hashes": [
@@ -558,6 +558,14 @@
                 "sha256:a108c445e1cd897fe19272ab7877d172e7faf3d4148c80e7d20faba42ea8f7b2"
             ],
             "version": "==0.11.0"
+        },
+        "schedule": {
+            "hashes": [
+                "sha256:1003a07c2dce12828c25a03a611a7371cedfa956e5f1b4abc32bcc94eb5a335b",
+                "sha256:a24e75fc5e5acbd204049d55329e39a2a9a3479bca2e34c7fde81386c9d8d2fa"
+            ],
+            "index": "pypi",
+            "version": "==0.5.0"
         },
         "simplegeneric": {
             "hashes": [

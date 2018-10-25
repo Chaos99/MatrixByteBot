@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## 0.2.0
 - imported dates plugin
+
 ## 0.1.10
 - fixed accidental password leak in default settings file
 - password changed of course

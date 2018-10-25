@@ -5,6 +5,10 @@ and registers them as listeners"""
 import logging
 from urllib.parse import urlparse
 
+import schedule
+from time import sleep
+from threading import Thread
+
 from matrix_client.client import MatrixClient
 from matrix_client.api import MatrixHttpApi
 
@@ -45,8 +49,17 @@ class MatrixBot:
                       ",".join([a['sender']
                                 if 'sender' in a.keys() else ""
                                 for a in self.members['chunk']]))
+        self.thread = Thread(target=self.schedule_loop)
+        self.thread.daemon = True
+        self.thread.start()
+        self.schedule = schedule
         #self.rooms =
         return None
+    
+    def schedule_loop(self):
+        while True:
+            schedule.run_pending()
+            sleep(1)
 
     def add_plugin(self, plugin):
         """Puts a plugin in the internal list

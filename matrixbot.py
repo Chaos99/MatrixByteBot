@@ -4,13 +4,14 @@ and registers them as listeners"""
 
 import logging
 from urllib.parse import urlparse
-
-import schedule
 from time import sleep
 from threading import Thread, Event
 
+import schedule
+
 from matrix_client.client import MatrixClient
 from matrix_client.api import MatrixHttpApi
+from matrix_client.errors import MatrixRequestError
 
 BOT_LOG = logging.getLogger('BotLog')
 
@@ -26,10 +27,10 @@ class MatrixBot:
         try:
             BOT_LOG.debug("Trying to log in as %s pw: %s",
                           username, "".join(['*' for p in password]))
-            self.token = self.client.login_with_password(username, password)
+            self.token = self.client.login(username, password)
             BOT_LOG.debug("Got Token %s..%s", self.token[0:3], self.token[-3:-1])
-        except Exception as e:
-            BOT_LOG.error("Login Failed: %s", e)
+        except MatrixRequestError as error:
+            BOT_LOG.error("Login Failed: Code: %s, Content: %s", error.code, error.content)
             return None
         #this is a second connection with different interface
         BOT_LOG.debug("Creating matrix API endpoint")
@@ -50,8 +51,13 @@ class MatrixBot:
                                 if 'sender' in a.keys() else ""
                                 for a in self.members['chunk']]))
 
+        rooms = []
+        for _, room in self.client.get_rooms().items():
+            rooms.append(room)
+
+        self.all_rooms = VirtualRoom(rooms)
+
         self.init_scheduler()
-        #self.rooms =
         return None
 
     def init_scheduler(self):
@@ -87,13 +93,12 @@ class MatrixBot:
 
     def get_room_id_by_name(self, name):
         """Translate human-readable room name into internal room id"""
-        BOT_LOG.debug("Getting room ID for name '%s'", name)
-        try:
-            if str(name).startswith('#'):
-                rid = self.api.get_room_id(name)
-            else:
-                rid = self.api.get_room_id('#' + name)
-        except Exception:
+        BOT_LOG.debug("Getting room ID for name '%s'", name)       
+        if str(name).startswith('#'):
+            rid = self.api.get_room_id(name)
+        else:
+            rid = self.api.get_room_id('#' + name)
+        if rid is None:
             BOT_LOG.warning("Room name '%s' not found", name)
             rid = ""
         return rid
@@ -108,3 +113,23 @@ class MatrixBot:
         # Starts polling for messages
         self.client.start_listener_thread()
         return self.client.sync_thread
+
+class VirtualRoom:
+    ''' offering matrix-client room like interfaces for a list of
+    several rooms to make general anouncements'''
+    def __init__(self, room_list):
+        self.room_list = room_list
+        self.name = None
+        self.cannonical_alias = None
+
+    def send_text(self, text):
+        'send a text message to all rooms'
+        for room in self.room_list:
+            room.send_text(text)
+
+    def display_name(self):
+        """Calculates the display name for a room."""
+        self.name = "\n".join([room.name for room in self.room_list])
+        if len(self.name) < 2:
+            self.name = "{} unnamed rooms".format(len(self.room_list))
+        return self.name

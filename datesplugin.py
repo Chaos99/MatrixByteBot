@@ -85,7 +85,7 @@ class DatesPlugin(Plugin):
             self.output_dates(now + timedelta(minutes=int(minutes-10)),
                               now + timedelta(minutes=int(minutes)),
                               'Bytespeicher',
-                              self.bot.rooms[0],
+                              self.all_rooms,
                               int(minutes))
     
 

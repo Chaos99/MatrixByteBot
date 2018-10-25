@@ -20,6 +20,7 @@ from datesplugin import DatesPlugin
 logging.basicConfig(level=logging.DEBUG)
 logging.getLogger("requests").setLevel(logging.WARNING)
 logging.getLogger("urllib3").setLevel(logging.WARNING)
+logging.getLogger("PluginLog").setLevel(logging.WARNING)
 
 MAIN_LOG = logging.getLogger('MainLog')
 
@@ -74,6 +75,7 @@ def main():
                 room.send_text("I'm sensing an upstream update, be right back.")
             break
 
+    bot.stop_scheduler()
     quit()
 
 if __name__ == "__main__":

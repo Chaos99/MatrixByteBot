@@ -31,10 +31,7 @@ class Plugin:
         if callback is called"""
 
         # Make sure we didn't send this message
-        try:
-            PLUGIN_LOG.debug("Handling message %s:%s", event['sender'], event['content']['body'])
-        except Exception as e:
-            PLUGIN_LOG.debug("Message %s caused exception %s", event, e)
+        PLUGIN_LOG.debug("Handling message %s:%s", event['sender'], event['content']['body'])
         if re.match(self.bot.fullname, event['sender']):
             PLUGIN_LOG.debug("Discarded because self-sent")
             return

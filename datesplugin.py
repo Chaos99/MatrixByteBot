@@ -35,25 +35,25 @@ class DatesPlugin(Plugin):
         self.bot = bot #safe for later use
         self.help_text = ""
         self.first_run = True
-        self.room = None
-        #self._update_cache()
+        DATES_LOG.debug("scheduling job at 1min")
         bot.schedule.every(1).minutes.do(self.test)
+        bot.schedule.every(5).minutes.do(self.dates_announce_next_talks)
 
     def test(self):
-        self.room.send_text("1min gone")
+        DATES_LOG.debug("Dates test called by scheduler")
+        self.bot.send("1min gone; could have done something useful here")
 
     def callback(self, room, event):
         """send collected help messages"""
         DATES_LOG.debug("%s sends response", self.name)
-        self.room = room
-        self.dates()
+        self.dates(room)
         #room.send_text(self.collect_help())
 
     def get_help(self):
         """Return help text"""
         return "Prints Bytespeicher calendar entries at !dates"
 
-    def dates(self):
+    def dates(self, room):
         """Show the planned dates within the next days
             %%dates
         """
@@ -63,35 +63,33 @@ class DatesPlugin(Plugin):
                                         second=0,
                                         microsecond=0)
 
-        self._update_cache()
+        self._update_cache(room)
 
         self.output_dates(now,
                           now + timedelta(days=21),
-                          'Bytespeicher')
+                          'Bytespeicher',
+                          room)
 
 
-        #    def cccongress_update_cron(self):
-        #        """Update ical file"""
-        #
-        #        yield from _update_cache(bot)
-        #
-        #
-        #    def dates_announce_next_talks(self):
-        #        """Announce next dates"""
-        #
-        #        now = datetime.utcnow().replace(second=0,
-        #                                        microsecond=0)
-        #
-        #        for minutes in config['announce_minutes'].split(' '):
-        #            yield from output_dates(bot,
-        #                                    bot.room,
-        #                                    now + timedelta(minutes=int(minutes)),
-        #                                    now + timedelta(minutes=int(minutes)),
-        #                                    'Bytespeicher',
-        #                                    int(minutes))
-        #
+        # def cccongress_update_cron(self):
+        #    """Update ical file"""
+        #   
+        #    yield from _update_cache(bot)
+    
+    
+    def dates_announce_next_talks(self):
+        """Announce next dates"""
+        now = datetime.utcnow().replace(second=0,
+                                        microsecond=0)
+        for minutes in [10, 1440]:
+            self.output_dates(now + timedelta(minutes=int(minutes-10)),
+                              now + timedelta(minutes=int(minutes)),
+                              'Bytespeicher',
+                              self.bot.rooms[0],
+                              int(minutes))
+    
 
-    def output_dates(self, now, then, filter_location, announce=0):
+    def output_dates(self, now, then, filter_location, room, announce=0):
         """
         Output dates between now and then and filter default location.
         Set announce greater 0 to add announce message and
@@ -236,7 +234,7 @@ class DatesPlugin(Plugin):
             # there were no events, print some message about this...
 
             if found > 0 and announce > 0:
-                self.room.send_text("Please notice the next following event(s):")
+                room.send_text("Please notice the next following event(s):")
 
             last_output = None
             for event in data:
@@ -246,19 +244,19 @@ class DatesPlugin(Plugin):
 
                 if last_output != output:
                     last_output = output
-                    self.room.send_text(output)
+                    room.send_text(output)
 
             if found == 0 and announce == 0:
-                self.room.send_text(
+                room.send_text(
                     "No dates during the next %d days" % 21
                 )
 
         except KeyError:
-            self.room.send_text("Error while retrieving dates data")
+            room.send_text("Error while retrieving dates data")
             raise Exception()
 
 
-    def _update_cache(self):
+    def _update_cache(self, room):
         """Update cached ical file"""
         url = 'http://www.google.com/calendar/ical/2eskb61g20prl65k2qd01uktis%40group.calendar.google.com/public/basic.ics'
         try:
@@ -272,15 +270,15 @@ class DatesPlugin(Plugin):
                     encoding = resp.headers.get_content_charset('utf-8')
                     text = r_raw.decode(encoding)
                 else:
-                    self.room.send_text("Error while retrieving calendar data")
+                    room.send_text("Error while retrieving calendar data")
                     raise Exception()
         except HTTPError as e:
             DATES_LOG.error('HTTPError = %s', str(e.code))
-            self.room.send_text("Error while retrieving calendar data\n"
+            room.send_text("Error while retrieving calendar data\n"
                                 'HTTPError = ' + str(e.code))
         except URLError as e:
             DATES_LOG.error('URLError = %s', str(e.reason))
-            self.room.send_text("Error while retrieving calendar data\n"
+            room.send_text("Error while retrieving calendar data\n"
                                 'URLError = ' + str(e.reason))
 
         try:

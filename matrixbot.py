@@ -7,7 +7,7 @@ from urllib.parse import urlparse
 
 import schedule
 from time import sleep
-from threading import Thread
+from threading import Thread, Event
 
 from matrix_client.client import MatrixClient
 from matrix_client.api import MatrixHttpApi
@@ -49,17 +49,36 @@ class MatrixBot:
                       ",".join([a['sender']
                                 if 'sender' in a.keys() else ""
                                 for a in self.members['chunk']]))
-        self.thread = Thread(target=self.schedule_loop)
-        self.thread.daemon = True
-        self.thread.start()
-        self.schedule = schedule
+
+        self.init_scheduler()
         #self.rooms =
         return None
-    
-    def schedule_loop(self):
-        while True:
-            schedule.run_pending()
-            sleep(1)
+
+    def init_scheduler(self):
+        ''' initialize a thread that handles the event loop for
+        the scheduler for all plugins'''
+        BOT_LOG.debug("Spinning up scheduler thread")
+        self.schedule = schedule
+        self.killswitch = Event()
+        self.killswitch.clear()
+        self.thread = Thread(target=self.schedule_loop, args=(self.killswitch,))
+        #self.thread.daemon = True
+        self.thread.start()
+
+    def stop_scheduler(self):
+        ''' wind down the scheduler thread gracefully before exit'''
+        BOT_LOG.debug("Trying to end scheduler thread ..")
+        self.killswitch.set()
+        self.thread.join()
+        BOT_LOG.debug("..successful")
+
+    def schedule_loop(self, stop_event):
+        ''' this event loop is run inside the scheduler thread'''
+        BOT_LOG.debug("Scheduler thread started successfully")
+        while not stop_event.is_set():
+            BOT_LOG.debug("Scheduler loop runs")
+            self.schedule.run_pending()
+            sleep(10)
 
     def add_plugin(self, plugin):
         """Puts a plugin in the internal list

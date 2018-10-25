@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.1.10
+- fixed accidental password leak in default settings file
+- password changed of course
+
 ## 0.1.9
 - publish license of base code
 

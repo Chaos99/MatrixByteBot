@@ -10,7 +10,9 @@ cd "${0%/*}"
 # Default to working directory
 LOCAL_REPO="."
 # Default to git pull with FF merge in quiet mode
-GIT_COMMAND="./stop_update.sh; git pull --quiet; ./start.sh"
+GIT_COMMAND="git pull --quiet"
+STOP_BOT="./stop_update.sh"
+START_BOT="./start.sh"
 
 # User messages
 GU_ERROR_FETCH_FAIL="Unable to fetch the remote repository."
@@ -35,10 +37,14 @@ if [ -d ".git" ]; then
 		LOCAL_SHA=$(git rev-parse --verify HEAD)
 		REMOTE_SHA=$(git rev-parse --verify FETCH_HEAD)
 		if [ $LOCAL_SHA = $REMOTE_SHA ]; then
-			echo $GU_INFO_REPOS_EQUAL
+			#no output on fail-if-no-updates to not generate cron mails
+			#echo $GU_INFO_REPOS_EQUAL
 			exit 0
 		else
+			cd ${0%/*}
+			$STOP_BOT
 			$GIT_COMMAND
+			$START_BOT
 			if (( $? )); then
 				echo $GU_ERROR_UPDATE_FAIL >&2
 				exit 1

@@ -43,19 +43,13 @@ def main():
     MAIN_LOG.debug("MatrixBot initializing with room %s", ROOM)
     bot = MatrixBot(USERNAME, PASSWORD, SERVER, ROOM)
 
-    # Add a regex handler waiting for the word
-    MAIN_LOG.debug("Creating HiPlugin")
+    # Add plugins to the bot 
     bot.add_plugin(HiPlugin("SayHi-Plugin", bot))
     bot.add_plugin(HelpPlugin("Help-Plugin", bot))
     bot.add_plugin(MaintenancePlugin("Maintenance-Plugin", bot))
     bot.add_plugin(DatesPlugin("Dates-Plugin", bot))
-
-    rooms = []
-    for room_id, room in bot.client.get_rooms().items():
-        MAIN_LOG.debug("Registering plugins in room %s", room_id)
-        rooms.append(room)
-        for plugin in bot.plugins:
-            room.add_listener(plugin.handle_message)
+            
+    bot.register_listeners()
 
     # Start polling
     bot.start_polling()

@@ -35,8 +35,6 @@ class MatrixBot:
         #this is a second connection with different interface
         BOT_LOG.debug("Creating matrix API endpoint")
         self.api = MatrixHttpApi(server, self.token)
-        BOT_LOG.debug("Syncing..")
-        self.api.sync()
         if str(roomId).startswith('!'):
             self.current_room = roomId
         else:
@@ -93,7 +91,7 @@ class MatrixBot:
 
     def get_room_id_by_name(self, name):
         """Translate human-readable room name into internal room id"""
-        BOT_LOG.debug("Getting room ID for name '%s'", name)       
+        BOT_LOG.debug("Getting room ID for name '%s'", name)
         if str(name).startswith('#'):
             rid = self.api.get_room_id(name)
         else:
@@ -113,6 +111,16 @@ class MatrixBot:
         # Starts polling for messages
         self.client.start_listener_thread()
         return self.client.sync_thread
+
+    def register_listeners(self):
+        ''' register the added plugins as listeners into the rooms
+        the bot si connected to'''
+        rooms = []
+        for room_id, room in self.client.get_rooms().items():
+            BOT_LOG.debug("Registering plugins in room %s (%s)", room.name, room_id)
+            rooms.append(room)
+            for plugin in self.plugins:
+                room.add_listener(plugin.handle_message)
 
 class VirtualRoom:
     ''' offering matrix-client room like interfaces for a list of

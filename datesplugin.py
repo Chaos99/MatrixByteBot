@@ -29,19 +29,16 @@ class DatesPlugin(Plugin):
     def __init__(self, name, bot):
         DATES_LOG.debug("Creating DatesPlugin")
         Plugin.__init__(self, name, bot)
+
         DATES_LOG.debug("Adding matcher for '!dates'")
         Plugin.add_matcher(self, re.compile("![Dd]ates"))
+        DATES_LOG.debug("scheduling announcement check at every 1min")
+        bot.schedule.every(1).minutes.do(self.dates_announce_next_talks)
 
         self.bot = bot #safe for later use
         self.help_text = ""
         self.first_run = True
-        DATES_LOG.debug("scheduling job at 1min")
-        bot.schedule.every(1).minutes.do(self.test)
-        bot.schedule.every(5).minutes.do(self.dates_announce_next_talks)
 
-    def test(self):
-        DATES_LOG.debug("Dates test called by scheduler")
-        self.bot.send("1min gone; could have done something useful here")
 
     def callback(self, room, event):
         """send collected help messages"""
@@ -51,45 +48,42 @@ class DatesPlugin(Plugin):
 
     def get_help(self):
         """Return help text"""
-        return "Prints Bytespeicher calendar entries at !dates"
+        return ("Prints Bytespeicher calendar entries at !dates"
+                "Announces upcomming events automatically.")
 
     def dates(self, room):
         """Show the planned dates within the next days
             %%dates
         """
-
         now = datetime.utcnow().replace(hour=0,
                                         minute=0,
                                         second=0,
                                         microsecond=0)
-
         self._update_cache(room)
-
         self.output_dates(now,
                           now + timedelta(days=21),
                           'Bytespeicher',
                           room)
 
-
         # def cccongress_update_cron(self):
         #    """Update ical file"""
-        #   
+        #
         #    yield from _update_cache(bot)
-    
-    
+
+
     def dates_announce_next_talks(self):
         """Announce next dates"""
         now = datetime.utcnow().replace(second=0,
                                         microsecond=0)
         for minutes in [10, 1440]:
-            self.output_dates(now + timedelta(minutes=int(minutes-10)),
+            self.output_dates(now + timedelta(minutes=int(minutes)),
                               now + timedelta(minutes=int(minutes)),
                               'Bytespeicher',
-                              self.all_rooms,
+                              self.bot.all_rooms,
                               int(minutes))
-    
 
-    def output_dates(self, now, then, filter_location, room, announce=0):
+    @staticmethod
+    def output_dates(now, then, filter_location, room, announce=0):
         """
         Output dates between now and then and filter default location.
         Set announce greater 0 to add announce message and
@@ -99,8 +93,8 @@ class DatesPlugin(Plugin):
         try:
             file = open('tmp/dates.cache')
             raw_text = file.read()
-        except OSError as e:
-            raise Exception(e)
+        except OSError as error:
+            raise Exception(error)
 
         try:
             cal = Calendar.from_ical(raw_text)
@@ -180,11 +174,11 @@ class DatesPlugin(Plugin):
                         # We just iterate the array of datetimes and put starting
                         # time (DTSTART) info (SUMMARY) and location (LOCATION)
                         # into our "database" of events
-                        for e in rset.between(now, then):
+                        for upcoming_event in rset.between(now, then):
                             found += 1
                             data.append({
-                                'datetime': e.strftime(fmt),
-                                'datetime_sort': e.strftime(fmt),
+                                'datetime': upcoming_event.strftime(fmt),
+                                'datetime_sort': upcoming_event.strftime(fmt),
                                 'info': info,
                                 'loc': loc,
                             })
@@ -255,8 +249,8 @@ class DatesPlugin(Plugin):
             room.send_text("Error while retrieving dates data")
             raise Exception()
 
-
-    def _update_cache(self, room):
+    @staticmethod
+    def _update_cache(room):
         """Update cached ical file"""
         url = 'http://www.google.com/calendar/ical/2eskb61g20prl65k2qd01uktis%40group.calendar.google.com/public/basic.ics'
         try:
@@ -272,14 +266,14 @@ class DatesPlugin(Plugin):
                 else:
                     room.send_text("Error while retrieving calendar data")
                     raise Exception()
-        except HTTPError as e:
-            DATES_LOG.error('HTTPError = %s', str(e.code))
+        except HTTPError as error:
+            DATES_LOG.error('HTTPError = %s', str(error.code))
             room.send_text("Error while retrieving calendar data\n"
-                                'HTTPError = ' + str(e.code))
-        except URLError as e:
-            DATES_LOG.error('URLError = %s', str(e.reason))
+                           'HTTPError = ' + str(error.code))
+        except URLError as error:
+            DATES_LOG.error('URLError = %s', str(error.reason))
             room.send_text("Error while retrieving calendar data\n"
-                                'URLError = ' + str(e.reason))
+                           'URLError = ' + str(error.reason))
 
         try:
             # Save ical cache to disk
@@ -288,5 +282,5 @@ class DatesPlugin(Plugin):
             cache.write('%s' % text)
             cache.close()
 
-        except OSError as e:
-            DATES_LOG.error(e)
+        except OSError as error:
+            DATES_LOG.error(error)

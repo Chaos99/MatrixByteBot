@@ -48,8 +48,8 @@ class HelpPlugin(Plugin):
                 "Sources at https://github.com/Chaos99/MatrixByteBot\n"
                 "This is an alpha version with just partial functionality and a lot of bugs!\n"
                 "\n Please use Github to submit bug reports or feature requests.")
-        return text        
-        
+        return text
+
     def callback(self, room, event):
         """send collected help messages"""
         HELP_LOG.debug("%s sends response", self.name)

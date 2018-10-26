@@ -43,12 +43,12 @@ def main():
     MAIN_LOG.debug("MatrixBot initializing with room %s", ROOM)
     bot = MatrixBot(USERNAME, PASSWORD, SERVER, ROOM)
 
-    # Add plugins to the bot 
+    # Add plugins to the bot
     bot.add_plugin(HiPlugin("SayHi-Plugin", bot))
     bot.add_plugin(HelpPlugin("Help-Plugin", bot))
     bot.add_plugin(MaintenancePlugin("Maintenance-Plugin", bot))
     bot.add_plugin(DatesPlugin("Dates-Plugin", bot))
-            
+
     bot.register_listeners()
 
     # Start polling

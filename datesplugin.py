@@ -97,7 +97,6 @@ class DatesPlugin(Plugin):
                 file = open(tmp_dates_cache)
                 raw_text = file.read()
             else:
-                return
                 raw_text = "BEGIN:VCALENDAR END:VCALENDAR"
         except OSError as error:
             raise Exception(error)

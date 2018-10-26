@@ -14,16 +14,47 @@ Re-implementing IRC-Bot plugins
 
 ## Build instructions
 ### build environment
-- original setup includes
-  - WinPython 3.6.6.2 including Python 3.6.6
-  - Also tested with Python 3.5 on Debian Linux 9 (Stretch)
-  - pip 18.1
-  - virtualenv 16.0.0
-  - tmux for start/stop/update scripts on Linux
+#### base system
+- WinPython 3.6.6.2 including Python 3.6.6
+- Also tested with Python 3.5 on Debian Linux 9 (Stretch)
+- pip 18.1
+- virtualenv 16.0.0
+- tmux for start/stop/update scripts on Linux
   
-  - Inside a python virtual environment:
-    - the matrix sdk package https://github.com/matrix-org/matrix-python-sdk 
-    - schedule package https://pypi.org/project/schedule/
+#### Inside a python virtual environment:
+- the matrix sdk package https://github.com/matrix-org/matrix-python-sdk 
+- schedule package https://pypi.org/project/schedule/
+
+#### Tipp:
+- if dependency building fails for obscure reasons, delete
+  Pipfile and re-add dependencies manually via pipenv 
+
+### development hints
+- subclass Plugin in plugin.py for own plugins
+- (re-)implement at least 
+  - \_\_init() for setting up the plugin
+  - callback() for the code to be executed on keyword recognition
+  - get_help() to return a short help text and usage description
+
+#### Setup
+  - call superclass constructor with ```Plugin.__init__(self, name, bot)```
+  - register regex match rules like ```self.add_matcher(re.compile("![Dd]ates"))``` (you can add multiple)
+  - register scheduled calls like ```bot.schedule.every(1).minutes.do(self.dates_announce_next_talks)```
+  - save reference to bot for later use in scheduled tasks if needed (e.g. as ```self.bot```)
+
+#### callback
+  - send messages via ```room.send_text()```
+  - get calling command via ```event['content']['body']``` for further analysis or matching
+
+#### get_help()
+  - return string for us ein !help command.
+  - approx. one line per command/function
+  - use "\n" in string for line breaks
+
+#### scheduled tasks
+  - any function or method can be scheduled via registration in \_\_init\_\_
+  - there is no ```room``` or ```event``` parameter, so send messages to all rooms via ```self.bot.all_rooms.send_text()```
+
 
 ## Usage instructions
 1. Change private_settings.py with username, password, servername and room

@@ -261,7 +261,7 @@ class DatesPlugin(Plugin):
         url = 'http://www.google.com/calendar/ical/2eskb61g20prl65k2qd01uktis%40group.calendar.google.com/public/basic.ics'
         try:
             #Request the ical file.
-            with request.urlopen(url) as resp:
+            with request.urlopen(url if url.startswith("http") else "") as resp:
                 DATES_LOG.debug("URL requested")
                 if resp.status == 200:
                     #Get text content from http request.

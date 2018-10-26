@@ -38,7 +38,6 @@ if [ -d ".git" ]; then
 		REMOTE_SHA=$(git rev-parse --verify FETCH_HEAD)
 		if [ $LOCAL_SHA = $REMOTE_SHA ]; then
 			#no output on fail-if-no-updates to not generate cron mails
-			#echo $GU_INFO_REPOS_EQUAL
 			exit 0
 		else
 			cd ${0%/*}

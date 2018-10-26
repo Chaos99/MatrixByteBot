@@ -1,3 +1,6 @@
 #!/bin/bash
 source env/bin/activate
-tmux new-session -A -d -s bytebot 'pipenv run python3 main.py'
+#first run
+#tmux new-session -d -s bytebot 'source env/bin/activate; pipenv run python3 main.py'
+#subsequent runs
+tmux send-keys -t bytebot 'source env/bin/activate; pipenv run python3 main.py' ENTER

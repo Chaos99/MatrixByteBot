@@ -32,7 +32,7 @@ class DatesPlugin(Plugin):
         Plugin.__init__(self, name, bot)
 
         DATES_LOG.debug("Adding matcher for '!dates'")
-        Plugin.add_matcher(self, re.compile("![Dd]ates"))
+        self.add_matcher(re.compile("![Dd]ates"))
         DATES_LOG.debug("scheduling announcement check at every 1min")
         bot.schedule.every(1).minutes.do(self.dates_announce_next_talks)
 

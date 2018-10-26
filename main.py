@@ -61,12 +61,10 @@ def main():
         serial = input()
         print(serial)
         if 'q' in serial:
-            for room in rooms:
-                room.send_text("I was summond back to the workbech. Bye!")
+            bot.all_rooms.send_text("I was summond back to the workbech. Bye!")
             break
         if 'u' in serial:
-            for room in rooms:
-                room.send_text("I'm sensing an upstream update, be right back.")
+            bot.all_rooms.send_text("I'm sensing an upstream update, be right back.")
             break
 
     bot.stop_scheduler()

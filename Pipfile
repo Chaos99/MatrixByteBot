@@ -12,6 +12,8 @@ icalendar = "*"
 aiohttp = "*"
 asyncio = "*"
 schedule = "*"
+coverage = "*"
+codacy-coverage = "*"
 
 [dev-packages]
 

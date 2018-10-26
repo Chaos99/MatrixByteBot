@@ -80,7 +80,7 @@ class MatrixBot:
         ''' this event loop is run inside the scheduler thread'''
         BOT_LOG.debug("Scheduler thread started successfully")
         while not stop_event.is_set():
-            BOT_LOG.debug("Scheduler loop runs")
+            #BOT_LOG.debug("Scheduler loop runs")
             self.schedule.run_pending()
             sleep(10)
 

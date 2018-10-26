@@ -5,7 +5,8 @@ Best to keep this file out of git version control by
 git update-index --assume-unchanged private_settings.py
 after adding personal data '''
 
-USERNAME = "MatrixBot"
-PASSWORD = "" # your bots username needs to be registered 
+
+USERNAME = "MatrixBotUAT"
+PASSWORD = "mbsvspw" # your bots username needs to be registered 
 SERVER = "https://erfurt.chat"  # Matrix server URL
 ROOM = "#bot_test:erfurt.chat"

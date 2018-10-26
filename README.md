@@ -58,15 +58,14 @@ Checked with Codacy
 -   any function or method can be scheduled via registration in \_\_init\_\_
 -   there is no ```room``` or ```event``` parameter, so send messages to all rooms via ```self.bot.all_rooms.send_text()```
 
-
 ## Usage instructions
-1. Change private_settings.py with username, password, servername and room
-2. use 'git update-index --assume-unchanged private_settings.py' to no longer track changes and not accidentally upload your password
-3. Start with ./start.sh (will start the bot inside a tmux shell by the name of 'bytebot')
-4. add ./gitupdate.sh to your crontab if you want to track github changes to the current branch (bot will stop, update, restart if changes are available)
-5. use 'tmux a -t bytebot' to connect to the session and see the terminal printout
-6. use ./stop.sh to stop the process (but keep the tmux session)
-7. use 'tmux kill-session -t bytebot' to also close the session
+1.  Change private_settings.py with username, password, servername and room
+2.  use 'git update-index --assume-unchanged private_settings.py' to no longer track changes and not accidentally upload your password
+3.  Start with ./start.sh (will start the bot inside a tmux shell by the name of 'bytebot')
+4.  add ./gitupdate.sh to your crontab if you want to track github changes to the current branch (bot will stop, update, restart if changes are available)
+5.  use 'tmux a -t bytebot' to connect to the session and see the terminal printout
+6.  use ./stop.sh to stop the process (but keep the tmux session)
+7.  use 'tmux kill-session -t bytebot' to also close the session
 
 ## License and Credits
 See LICENSE file for GPLv3 license of this software.
@@ -80,7 +79,7 @@ Copyright 2013 Christopher Simpkins
 MIT License
 
 schedule python package <https://pypi.org/project/schedule/>
-Daniel Bader - @dbader_org - <mail@dbader.org>
+Daniel Bader - @dbader_org - <mailto://mail@dbader.org>
 MIT license
 
 Based on (and contains snipets of code from) 

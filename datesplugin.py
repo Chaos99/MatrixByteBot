@@ -47,7 +47,8 @@ class DatesPlugin(Plugin):
         self.dates(room)
         #room.send_text(self.collect_help())
 
-    def get_help(self):
+    @staticmethod
+    def get_help():
         """Return help text"""
         return ("Prints Bytespeicher calendar entries at !dates\n"
                 "Announces upcomming events automatically.")

@@ -42,7 +42,8 @@ class HelpPlugin(Plugin):
 
         return self.help_text
 
-    def get_about(self):
+    @staticmethod
+    def get_about():
         text = ("MatrixByteBot by @Chaos:erfurt.chat\n"
                 "GNU General Public License v3.0 (https://www.gnu.org/licenses/gpl.html)\n"
                 "Sources at https://github.com/Chaos99/MatrixByteBot\n"
@@ -58,7 +59,8 @@ class HelpPlugin(Plugin):
         else:
             room.send_text(self.collect_help())
 
-    def get_help(self):
+    @staticmethod
+    def get_help():
         """Return help text"""
         return ("Prints this help text on !help\n"
                 "and some meta info on !about")

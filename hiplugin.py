@@ -23,6 +23,7 @@ class HiPlugin(Plugin):
         HI_LOG.debug("%s sends response", self.name)
         room.send_text("Hi, " + event['sender'])
 
-    def get_help(self):
+    @staticmethod
+    def get_help():
         """Return help text"""
         return "Answers friendly on anything starting with !Hi or !Hello"

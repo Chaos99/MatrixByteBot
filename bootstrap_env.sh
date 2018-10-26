@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #get Python >=3.6 (and pip) for your distribution
 #apt-get install python3
 #apt-get install pip

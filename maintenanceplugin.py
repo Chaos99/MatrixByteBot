@@ -28,7 +28,7 @@ class MaintenancePlugin(Plugin):
         self.first_run = {'plugins':True,
                           'version':True,
                           'history':True}
-        
+
         self.plugin_names = "names could not be read"
         self.version = "no version set"
         self.history = "history could not be read"
@@ -50,7 +50,7 @@ class MaintenancePlugin(Plugin):
         """ get version number from topmost entry in CHANGELOG.mf"""
         if not self.first_run['version']:
             pass
-        else:            
+        else:
             pattern = re.compile(r'##\s*(.*)')
             for line in open('CHANGELOG.md'):
                 match = re.match(pattern, line)
@@ -64,7 +64,7 @@ class MaintenancePlugin(Plugin):
         """ calculate uotime since start"""
         uptime = datetime.datetime.now() - self.start_time
         return str(uptime)
-    
+
     def get_history(self):
         """ extract a few lines from the CHANGELOG file"""
         length = 9
@@ -80,7 +80,7 @@ class MaintenancePlugin(Plugin):
                         MTN_LOG.debug("Found %s, printing lines %d to %d", line[:-1], i, to)
                         self.history = lines[i:to]
                         break #stop at first match
-                self.first_run['history'] = False                
+                self.first_run['history'] = False
         return "".join(self.history)
 
     def callback(self, room, event):
@@ -95,7 +95,8 @@ class MaintenancePlugin(Plugin):
         if re.compile("![Hh]istory").match(event['content']['body']):
             room.send_text(self.get_history())
 
-    def get_help(self):
+    @staticmethod
+    def get_help():
         """Return help text"""
         return ("Returns version info on !version\n"
                 "Lists available plugins on !list\n"

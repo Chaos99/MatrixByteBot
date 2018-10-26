@@ -16,6 +16,7 @@ from dateutil.parser import parse
 from icalendar import Calendar
 from icalendar.prop import vDDDTypes, vDDDLists
 from pytz import utc, timezone
+from pathlib import Path
 
 from plugin import Plugin
 
@@ -91,8 +92,13 @@ class DatesPlugin(Plugin):
         """
 
         try:
-            file = open('tmp/dates.cache')
-            raw_text = file.read()
+            tmp_dates_cache = Path('tmp/dates.cache')
+            if tmp_dates_cache.exists():
+                file = open(tmp_dates_cache)
+                raw_text = file.read()
+            else:
+                return
+                raw_text = "BEGIN:VCALENDAR END:VCALENDAR"
         except OSError as error:
             raise Exception(error)
 

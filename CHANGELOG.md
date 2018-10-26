@@ -4,9 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## 0.2.1
+## 0.2.2
 - fix all-room messages
 - start-script assumes existing tmux session
+
+## 0.2.1
+- fix check for existience of cache file
 
 ## 0.2.0
 - imported dates plugin

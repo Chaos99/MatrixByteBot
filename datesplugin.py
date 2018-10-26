@@ -49,7 +49,7 @@ class DatesPlugin(Plugin):
 
     def get_help(self):
         """Return help text"""
-        return ("Prints Bytespeicher calendar entries at !dates"
+        return ("Prints Bytespeicher calendar entries at !dates\n"
                 "Announces upcomming events automatically.")
 
     def dates(self, room):

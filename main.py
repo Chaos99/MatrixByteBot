@@ -15,6 +15,7 @@ from hiplugin import HiPlugin
 from helpplugin import HelpPlugin
 from maintenanceplugin import MaintenancePlugin
 from datesplugin import DatesPlugin
+from statusplugin import StatusPlugin
 
 # logging configuration
 logging.basicConfig(level=logging.DEBUG)
@@ -48,6 +49,7 @@ def main():
     bot.add_plugin(HelpPlugin("Help-Plugin", bot))
     bot.add_plugin(MaintenancePlugin("Maintenance-Plugin", bot))
     bot.add_plugin(DatesPlugin("Dates-Plugin", bot))
+    bot.add_plugin(StatusPlugin("Status-Plugin", bot))
 
     bot.register_listeners()
 

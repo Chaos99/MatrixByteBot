@@ -11,7 +11,7 @@ from json import JSONDecodeError
 from urllib import request
 from urllib.error import HTTPError, URLError
 
-from plugin import Plugin
+from .plugin import Plugin
 
 
 STATUS_LOG = logging.getLogger('StatusPluginLog')

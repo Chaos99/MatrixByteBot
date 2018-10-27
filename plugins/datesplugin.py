@@ -18,7 +18,7 @@ from icalendar.prop import vDDDTypes, vDDDLists
 from pytz import utc, timezone
 from pathlib import Path
 
-from plugin import Plugin
+from .plugin import Plugin
 
 DATES_LOG = logging.getLogger('HelpPluginLog')
 
@@ -289,7 +289,7 @@ class DatesPlugin(Plugin):
             # Save ical cache to disk
             cache = open('tmp/dates.cache', "w", encoding='utf-8')
             cache.truncate(0)
-            cache.write('%s' % text)
+            cache.write('%s' % text.encode(encoding))
             cache.close()
 
         except OSError as error:

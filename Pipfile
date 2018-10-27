@@ -9,6 +9,8 @@ name = "pypi"
 schedule = "*"
 coverage = "*"
 codacy-coverage = "*"
+pytest = "*"
+pytest-cov = "*"
 
 [requires]
 python_version = "3.5"

@@ -8,7 +8,7 @@ import re
 import logging
 import datetime
 
-from plugin import Plugin
+from .plugin import Plugin
 
 MTN_LOG = logging.getLogger('MaintenancePluginLog')
 

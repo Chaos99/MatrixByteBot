@@ -4,7 +4,7 @@ Example plugin that just says "Hi"
 """
 import re
 import logging
-from plugin import Plugin
+from .plugin import Plugin
 
 HI_LOG = logging.getLogger('HiPluginLog')
 

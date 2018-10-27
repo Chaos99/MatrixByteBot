@@ -11,11 +11,11 @@ import logging
 
 from matrixbot import MatrixBot
 
-from hiplugin import HiPlugin
-from helpplugin import HelpPlugin
-from maintenanceplugin import MaintenancePlugin
-from datesplugin import DatesPlugin
-from statusplugin import StatusPlugin
+from plugins.hiplugin import HiPlugin
+from plugins.helpplugin import HelpPlugin
+from plugins.maintenanceplugin import MaintenancePlugin
+from plugins.datesplugin import DatesPlugin
+from plugins.statusplugin import StatusPlugin
 
 # logging configuration
 logging.basicConfig(level=logging.DEBUG)

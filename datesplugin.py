@@ -47,7 +47,8 @@ class DatesPlugin(Plugin):
         self.dates(room)
         #room.send_text(self.collect_help())
 
-    def get_help(self):
+    @staticmethod
+    def get_help():
         """Return help text"""
         return ("Prints Bytespeicher calendar entries at !dates\n"
                 "Announces upcomming events automatically.")
@@ -97,7 +98,6 @@ class DatesPlugin(Plugin):
                 file = open(tmp_dates_cache)
                 raw_text = file.read()
             else:
-                return
                 raw_text = "BEGIN:VCALENDAR END:VCALENDAR"
         except OSError as error:
             raise Exception(error)
@@ -261,7 +261,9 @@ class DatesPlugin(Plugin):
         url = 'http://www.google.com/calendar/ical/2eskb61g20prl65k2qd01uktis%40group.calendar.google.com/public/basic.ics'
         try:
             #Request the ical file.
-            with request.urlopen(url) as resp:
+            req = request.Request(url)
+            with request.urlopen(req) as resp:
+            # with request.urlopen(url if url.startswith("http") else "") as resp:
                 DATES_LOG.debug("URL requested")
                 if resp.status == 200:
                     #Get text content from http request.

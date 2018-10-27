@@ -19,10 +19,10 @@ class MaintenancePlugin(Plugin):
         MTN_LOG.debug("Creating MaintenancePlugin")
         Plugin.__init__(self, name, bot)
         MTN_LOG.debug("Adding matcher for '![Vv]ersion'")
-        Plugin.add_matcher(self, re.compile("![Vv]ersion"))
-        Plugin.add_matcher(self, re.compile("![Ll]ist"))
-        Plugin.add_matcher(self, re.compile("![Uu]ptime"))
-        Plugin.add_matcher(self, re.compile("![Hh]istory"))
+        self.add_matcher(re.compile("![Vv]ersion"))
+        self.add_matcher(re.compile("![Ll]ist"))
+        self.add_matcher(re.compile("![Uu]ptime"))
+        self.add_matcher(re.compile("![Hh]istory"))
 
         self.bot = bot #safe for later use
         self.first_run = {'plugins':True,

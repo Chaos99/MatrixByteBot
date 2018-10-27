@@ -17,28 +17,37 @@ BOT_LOG = logging.getLogger('BotLog')
 
 class MatrixBot:
     """The main bot, connecting to the server and handling plugins"""
-    def __init__(self, username, password, server, roomId):
+    def __init__(self, username, server):
         self.username = username
         self.fullname = "@"+str(username).lower()+':'+urlparse(server).hostname
         self.plugins = []
+        self.api = None
+        self.current_room = ""
+        self.members = []
+        self.all_rooms = None
+
         # Connect to server
         BOT_LOG.debug("creating matrix client for server %s", server)
         self.client = MatrixClient(server)
+
+        self.init_scheduler()
+
+    def connect(self, username, password, server, room_id):
+        ''' log in to the server and get connected rooms'''
         try:
             BOT_LOG.debug("Trying to log in as %s pw: %s",
                           username, "".join(['*' for p in password]))
-            self.token = self.client.login(username, password)
-            BOT_LOG.debug("Got Token %s..%s", self.token[0:3], self.token[-3:-1])
+            token = self.client.login(username, password)
+            BOT_LOG.debug("Got Token %s..%s", token[0:3], token[-3:-1])
         except MatrixRequestError as error:
             BOT_LOG.error("Login Failed: Code: %s, Content: %s", error.code, error.content)
-            return None
         #this is a second connection with different interface
         BOT_LOG.debug("Creating matrix API endpoint")
-        self.api = MatrixHttpApi(server, self.token)
-        if str(roomId).startswith('!'):
-            self.current_room = roomId
+        self.api = MatrixHttpApi(server, token)
+        if str(room_id).startswith('!'):
+            self.current_room = room_id
         else:
-            self.current_room = self.get_room_id_by_name(roomId)
+            self.current_room = self.get_room_id_by_name(room_id)
         BOT_LOG.debug("Joining room with id %s", self.current_room)
         self.api.join_room(self.current_room)
 
@@ -48,15 +57,12 @@ class MatrixBot:
                       ",".join([a['sender']
                                 if 'sender' in a.keys() else ""
                                 for a in self.members['chunk']]))
-
         rooms = []
         for _, room in self.client.get_rooms().items():
             rooms.append(room)
 
         self.all_rooms = VirtualRoom(rooms)
 
-        self.init_scheduler()
-        return None
 
     def init_scheduler(self):
         ''' initialize a thread that handles the event loop for

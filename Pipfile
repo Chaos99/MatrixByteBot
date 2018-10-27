@@ -3,19 +3,12 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 name = "pypi"
 
+[dev-packages]
+
 [packages]
-matrix-client = "*"
-spyder-kernels = "<=1.0"
-spyder = "*"
-pytz = "*"
-icalendar = "*"
-aiohttp = "*"
-asyncio = "*"
 schedule = "*"
 coverage = "*"
 codacy-coverage = "*"
 
-[dev-packages]
-
 [requires]
-python_version = "3.6"
+python_version = "3.5"

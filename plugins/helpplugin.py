@@ -44,6 +44,7 @@ class HelpPlugin(Plugin):
 
     @staticmethod
     def get_about():
+        """provide about-text to link to repo and state license"""
         text = ("MatrixByteBot by @Chaos:erfurt.chat\n"
                 "GNU General Public License v3.0 (https://www.gnu.org/licenses/gpl.html)\n"
                 "Sources at https://github.com/Chaos99/MatrixByteBot\n"

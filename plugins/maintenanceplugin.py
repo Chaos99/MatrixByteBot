@@ -40,7 +40,7 @@ class MaintenancePlugin(Plugin):
         if not self.first_run['plugins']:
             pass
         else:
-            self.plugin_names=""
+            self.plugin_names = ""
             for plugin in self.bot.plugins:
                 self.plugin_names += (plugin.name + '\n')
             self.first_run['plugins'] = False
@@ -74,11 +74,12 @@ class MaintenancePlugin(Plugin):
             pattern = re.compile(r'##\s*(.*)')
             with open('CHANGELOG.md') as file:
                 lines = file.readlines()
-                for i,line in enumerate(lines):
+                for i, line in enumerate(lines):
                     if pattern.match(line):
-                        to = i + length if ((i+length)<len(lines)) else (len(lines)-1)
-                        MTN_LOG.debug("Found %s, printing lines %d to %d", line[:-1], i, to)
-                        self.history = lines[i:to]
+                        upper_limit = i + length if ((i+length) < len(lines)) else (len(lines)-1)
+                        MTN_LOG.debug("Found %s, printing lines %d to %d",
+                                      line[:-1], i, upper_limit)
+                        self.history = lines[i:upper_limit]
                         break #stop at first match
                 self.first_run['history'] = False
         return "".join(self.history)

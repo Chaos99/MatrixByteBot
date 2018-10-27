@@ -54,7 +54,7 @@ class StatusPlugin(Plugin):
         try:
             data = self.spaceapi(room)
 
-            room.send_text('Space status:')
+            room.send_text(data['space'] + ' status:')
             if data['state']['open']:
                 room.send_text('\tThe space is open!')
             else:
@@ -86,12 +86,16 @@ class StatusPlugin(Plugin):
     @staticmethod
     def spaceapi(room):
         ''' Download spacapi json and return decoded content'''
-        url = "https://status.bytespeicher.org/status.json"
+        if room.name == "Makerspace Erfurt":
+             url = "https://status.makerspace-erfurt.de/status.json"
+        else:
+             url = "https://status.bytespeicher.org/status.json"
         try:
             #Request the ical file.
             req = request.Request(url)
             with request.urlopen(req) as resp:
             # with request.urlopen(url if url.startswith("http") else "") as resp:
+                STATUS_LOG.debug("Room  %s ", str(room.name))
                 STATUS_LOG.debug("URL requested")
                 if resp.status == 200:
                     #Get text content from http request.

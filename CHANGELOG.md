@@ -4,11 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.3.2
+-   fixed file encoding bug
+
 ## 0.3.1
--    fixed incompatibility between pathlib and python 3.5
+-   fixed incompatibility between pathlib and python 3.5
 
 ## 0.3.0
--    added status plugin
+-   added status plugin
 
 ## 0.2.4
 -   fixes to make code checks happier

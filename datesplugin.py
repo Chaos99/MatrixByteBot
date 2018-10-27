@@ -95,10 +95,12 @@ class DatesPlugin(Plugin):
         try:
             tmp_dates_cache = Path('tmp/dates.cache')
             if tmp_dates_cache.exists():
-                file = open(str(tmp_dates_cache))
+                file = open(str(tmp_dates_cache), encoding='utf-8')
                 raw_text = file.read()
+                if len(raw_text) == 0:
+                   return
             else:
-                raw_text = "BEGIN:VCALENDAR END:VCALENDAR"
+                return
         except OSError as error:
             raise Exception(error)
 
@@ -285,7 +287,7 @@ class DatesPlugin(Plugin):
 
         try:
             # Save ical cache to disk
-            cache = open('tmp/dates.cache', "w")
+            cache = open('tmp/dates.cache', "w", encoding='utf-8')
             cache.truncate(0)
             cache.write('%s' % text)
             cache.close()

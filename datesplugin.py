@@ -95,7 +95,7 @@ class DatesPlugin(Plugin):
         try:
             tmp_dates_cache = Path('tmp/dates.cache')
             if tmp_dates_cache.exists():
-                file = open(tmp_dates_cache)
+                file = open(str(tmp_dates_cache))
                 raw_text = file.read()
             else:
                 raw_text = "BEGIN:VCALENDAR END:VCALENDAR"

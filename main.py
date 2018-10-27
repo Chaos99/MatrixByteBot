@@ -22,6 +22,7 @@ logging.basicConfig(level=logging.DEBUG)
 logging.getLogger("requests").setLevel(logging.WARNING)
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 logging.getLogger("PluginLog").setLevel(logging.WARNING)
+logging.getLogger("schedule").setLevel(logging.WARNING)
 
 MAIN_LOG = logging.getLogger('MainLog')
 

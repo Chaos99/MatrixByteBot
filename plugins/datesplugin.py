@@ -22,8 +22,6 @@ from .plugin import Plugin
 
 DATES_LOG = logging.getLogger('HelpPluginLog')
 
-
-
 class DatesPlugin(Plugin):
     """Collects help messages
     from all other plugins and displays them"""
@@ -288,7 +286,7 @@ class DatesPlugin(Plugin):
         try:
             # Save ical cache to disk
             cache = open('tmp/dates.cache', "w", encoding='utf-8')
-            cache.truncate(0)
+            #cache.truncate(0)
             cache.write('%s' % text.encode(encoding))
             cache.close()
 

@@ -30,7 +30,6 @@ class MatrixBot:
         BOT_LOG.debug("creating matrix client for server %s", server)
         self.client = MatrixClient(server)
 
-        self.init_scheduler()
 
     def connect(self, username, password, server, room_id):
         ''' log in to the server and get connected rooms'''

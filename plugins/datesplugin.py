@@ -262,7 +262,9 @@ class DatesPlugin(Plugin):
         url = 'http://www.google.com/calendar/ical/2eskb61g20prl65k2qd01uktis%40group.calendar.google.com/public/basic.ics'
         try:
             #Request the ical file.
-            req = request.Request(url)
+            #urllib may pose a security risk because it can open local files with file://
+            #this is not a problem here as URLs are hardcoded/come from settings file
+            req = request.Request(url) #nosec (disables security warning)
             with request.urlopen(req) as resp:
             # with request.urlopen(url if url.startswith("http") else "") as resp:
                 DATES_LOG.debug("URL requested")

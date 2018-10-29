@@ -93,7 +93,7 @@ class DatesPlugin(Plugin):
         try:
             tmp_dates_cache = Path('tmp/dates.cache')
             if tmp_dates_cache.exists():
-                file = open(str(tmp_dates_cache), encoding='UTF-8')                
+                file = open(str(tmp_dates_cache), encoding='UTF-8')
                 raw_text = file.read()
                 text = raw_text
                 if len(text) == 0:
@@ -264,8 +264,8 @@ class DatesPlugin(Plugin):
             #Request the ical file.
             #urllib may pose a security risk because it can open local files with file://
             #this is not a problem here as URLs are hardcoded/come from settings file
-            req = request.Request(url) #nosec (disables security warning)
-            with request.urlopen(req) as resp:
+            req = request.Request(url) 
+            with request.urlopen(req) as resp: # nosec (disables security warning)
             # with request.urlopen(url if url.startswith("http") else "") as resp:
                 DATES_LOG.debug("URL requested")
                 if resp.status == 200:

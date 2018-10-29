@@ -7,6 +7,8 @@ from ..plugins.datesplugin import DatesPlugin as TestPlugin
 from os.path import getmtime
 from os import remove
 import schedule
+from datetime import datetime, timedelta
+from shutil import copyfile
 
 class MockBot():
     """mockup class to replace bot class"""
@@ -21,7 +23,7 @@ class MockRoom():
 
     def send_text(self, text):
         """capture the messages sent to this room"""
-        self.text_response = text
+        self.text_response += text + ("\n")
 
 
 #def test_callback():
@@ -79,13 +81,16 @@ def test_update_cache():
     assert len(cache.read()) > 100
     cache.close()
 
-#def test_users():
-#    """make sure some text is returned"""
-#    bot = MatrixBot("DummyName", "http://example.com")
-#    test_plugin = TestPlugin("nametest", bot)
-#    room = MockRoom()
-#    test_plugin.users(room)
-#    assert "space" in room.text_response
+def test_output_dates():
+    """make sure some text is returned"""
+    bot = MockBot()
+    test_plugin = TestPlugin("nametest", bot)
+    room = MockRoom()
+    testtime = datetime.strptime('2018-10-28', '%Y-%m-%d')
+    copyfile('tests/dates.example', 'tmp/dates.cache')
+    test_plugin.output_dates(testtime, testtime + timedelta(days=21), 'Bytespeicher', room,)
+    assert "Kennenlerntreffen" in room.text_response
+    assert len(room.text_response.split('\n')) == 11
 #
 #def test_status():
 #    """make sure some text is returned"""

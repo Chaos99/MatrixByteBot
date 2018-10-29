@@ -93,9 +93,10 @@ class DatesPlugin(Plugin):
         try:
             tmp_dates_cache = Path('tmp/dates.cache')
             if tmp_dates_cache.exists():
-                file = open(str(tmp_dates_cache), encoding='utf-8')
+                file = open(str(tmp_dates_cache), encoding='UTF-8')                
                 raw_text = file.read()
-                if len(raw_text) == 0:
+                text = raw_text
+                if len(text) == 0:
                    return
             else:
                 return
@@ -103,7 +104,7 @@ class DatesPlugin(Plugin):
             raise Exception(error)
 
         try:
-            cal = Calendar.from_ical(raw_text)
+            cal = Calendar.from_ical(text)
             found = 0
 
             data = []
@@ -287,7 +288,8 @@ class DatesPlugin(Plugin):
             # Save ical cache to disk
             cache = open('tmp/dates.cache', "w", encoding='utf-8')
             #cache.truncate(0)
-            cache.write('%s' % text.encode(encoding))
+            #cache.write('%s' % text.encode(encoding))
+            cache.write(text) #already encoded through encoding param on file open?
             cache.close()
 
         except OSError as error:

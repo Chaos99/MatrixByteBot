@@ -264,7 +264,7 @@ class DatesPlugin(Plugin):
             #Request the ical file.
             #urllib may pose a security risk because it can open local files with file://
             #this is not a problem here as URLs are hardcoded/come from settings file
-            req = request.Request(url) 
+            req = request.Request(url)
             with request.urlopen(req) as resp: # nosec (disables security warning)
             # with request.urlopen(url if url.startswith("http") else "") as resp:
                 DATES_LOG.debug("URL requested")

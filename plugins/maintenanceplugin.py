@@ -8,7 +8,7 @@ import re
 import logging
 import datetime
 
-from plugin import Plugin
+from .plugin import Plugin
 
 MTN_LOG = logging.getLogger('MaintenancePluginLog')
 
@@ -19,10 +19,10 @@ class MaintenancePlugin(Plugin):
         MTN_LOG.debug("Creating MaintenancePlugin")
         Plugin.__init__(self, name, bot)
         MTN_LOG.debug("Adding matcher for '![Vv]ersion'")
-        Plugin.add_matcher(self, re.compile("![Vv]ersion"))
-        Plugin.add_matcher(self, re.compile("![Ll]ist"))
-        Plugin.add_matcher(self, re.compile("![Uu]ptime"))
-        Plugin.add_matcher(self, re.compile("![Hh]istory"))
+        self.add_matcher(re.compile("![Vv]ersion"))
+        self.add_matcher(re.compile("![Ll]ist"))
+        self.add_matcher(re.compile("![Uu]ptime"))
+        self.add_matcher(re.compile("![Hh]istory"))
 
         self.bot = bot #safe for later use
         self.first_run = {'plugins':True,
@@ -40,7 +40,7 @@ class MaintenancePlugin(Plugin):
         if not self.first_run['plugins']:
             pass
         else:
-            self.plugin_names=""
+            self.plugin_names = ""
             for plugin in self.bot.plugins:
                 self.plugin_names += (plugin.name + '\n')
             self.first_run['plugins'] = False
@@ -74,11 +74,12 @@ class MaintenancePlugin(Plugin):
             pattern = re.compile(r'##\s*(.*)')
             with open('CHANGELOG.md') as file:
                 lines = file.readlines()
-                for i,line in enumerate(lines):
+                for i, line in enumerate(lines):
                     if pattern.match(line):
-                        to = i + length if ((i+length)<len(lines)) else (len(lines)-1)
-                        MTN_LOG.debug("Found %s, printing lines %d to %d", line[:-1], i, to)
-                        self.history = lines[i:to]
+                        upper_limit = i + length if ((i+length) < len(lines)) else (len(lines)-1)
+                        MTN_LOG.debug("Found %s, printing lines %d to %d",
+                                      line[:-1], i, upper_limit)
+                        self.history = lines[i:upper_limit]
                         break #stop at first match
                 self.first_run['history'] = False
         return "".join(self.history)

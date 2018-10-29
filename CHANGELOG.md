@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## 0.3.3
 -   extend Status to Makerspace, identified on Channelname
 
+## 0.3.3
+-   removed logging by scheduler package 
+
 ## 0.3.2
 -   fixed file encoding bug
 

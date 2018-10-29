@@ -11,17 +11,18 @@ import logging
 
 from matrixbot import MatrixBot
 
-from hiplugin import HiPlugin
-from helpplugin import HelpPlugin
-from maintenanceplugin import MaintenancePlugin
-from datesplugin import DatesPlugin
-from statusplugin import StatusPlugin
+from plugins.hiplugin import HiPlugin
+from plugins.helpplugin import HelpPlugin
+from plugins.maintenanceplugin import MaintenancePlugin
+from plugins.datesplugin import DatesPlugin
+from plugins.statusplugin import StatusPlugin
 
 # logging configuration
 logging.basicConfig(level=logging.DEBUG)
 logging.getLogger("requests").setLevel(logging.WARNING)
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 logging.getLogger("PluginLog").setLevel(logging.WARNING)
+logging.getLogger("schedule").setLevel(logging.WARNING)
 
 MAIN_LOG = logging.getLogger('MainLog')
 
@@ -42,7 +43,10 @@ def main():
     # Create an instance of the MatrixBotAPI
     MAIN_LOG.debug("main() started, trying to initialize")
     MAIN_LOG.debug("MatrixBot initializing with room %s", ROOM)
-    bot = MatrixBot(USERNAME, PASSWORD, SERVER, ROOM)
+    bot = MatrixBot(USERNAME, SERVER)
+    bot.init_scheduler()
+    
+    bot.connect(USERNAME, PASSWORD, SERVER, ROOM)
 
     # Add plugins to the bot
     bot.add_plugin(HiPlugin("SayHi-Plugin", bot))

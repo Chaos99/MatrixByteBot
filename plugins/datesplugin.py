@@ -18,11 +18,9 @@ from icalendar.prop import vDDDTypes, vDDDLists
 from pytz import utc, timezone
 from pathlib import Path
 
-from plugin import Plugin
+from .plugin import Plugin
 
 DATES_LOG = logging.getLogger('HelpPluginLog')
-
-
 
 class DatesPlugin(Plugin):
     """Collects help messages
@@ -95,9 +93,10 @@ class DatesPlugin(Plugin):
         try:
             tmp_dates_cache = Path('tmp/dates.cache')
             if tmp_dates_cache.exists():
-                file = open(str(tmp_dates_cache), encoding='utf-8')
+                file = open(str(tmp_dates_cache), encoding='UTF-8')
                 raw_text = file.read()
-                if len(raw_text) == 0:
+                text = raw_text
+                if len(text) == 0:
                    return
             else:
                 return
@@ -105,7 +104,7 @@ class DatesPlugin(Plugin):
             raise Exception(error)
 
         try:
-            cal = Calendar.from_ical(raw_text)
+            cal = Calendar.from_ical(text)
             found = 0
 
             data = []
@@ -263,8 +262,10 @@ class DatesPlugin(Plugin):
         url = 'http://www.google.com/calendar/ical/2eskb61g20prl65k2qd01uktis%40group.calendar.google.com/public/basic.ics'
         try:
             #Request the ical file.
+            #urllib may pose a security risk because it can open local files with file://
+            #this is not a problem here as URLs are hardcoded/come from settings file
             req = request.Request(url)
-            with request.urlopen(req) as resp:
+            with request.urlopen(req) as resp: # nosec (disables security warning)
             # with request.urlopen(url if url.startswith("http") else "") as resp:
                 DATES_LOG.debug("URL requested")
                 if resp.status == 200:
@@ -288,8 +289,9 @@ class DatesPlugin(Plugin):
         try:
             # Save ical cache to disk
             cache = open('tmp/dates.cache', "w", encoding='utf-8')
-            cache.truncate(0)
-            cache.write('%s' % text)
+            #cache.truncate(0)
+            #cache.write('%s' % text.encode(encoding))
+            cache.write(text) #already encoded through encoding param on file open?
             cache.close()
 
         except OSError as error:

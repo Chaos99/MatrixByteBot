@@ -3,8 +3,17 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
-## 0.3.3
+
+
+
+## 0.3.5
 -   extend Status to Makerspace, identified on Channelname
+
+## 0.3.4
+-   re-organized files into folders
+-   added test suite and tests for some plugins
+-   added CI test tool at codacy.com
+-   re-fixed encoding bug
 
 ## 0.3.3
 -   removed logging by scheduler package 

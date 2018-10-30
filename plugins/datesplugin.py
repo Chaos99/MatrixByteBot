@@ -238,14 +238,20 @@ class DatesPlugin(Plugin):
                 room.send_text("Please notice the next following event(s):")
 
             last_output = None
+            all_output = ''
             for event in data:
                 output = "  %s - %s" % (event['datetime'], event['info'])
                 if event['loc']:
                     output = "%s (%s)" % (output, event['loc'])
 
+                output += "\n"
+
                 if last_output != output:
                     last_output = output
-                    room.send_text(output)
+                    all_output += output
+                    #room.send_text(output)
+            if len(all_output) > 0:
+               room.send_text(all_output)
 
             if found == 0 and announce == 0:
                 room.send_text(

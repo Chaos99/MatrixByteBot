@@ -45,7 +45,7 @@ def main():
     MAIN_LOG.debug("MatrixBot initializing with room %s", ROOM)
     bot = MatrixBot(USERNAME, SERVER)
     bot.init_scheduler()
-    
+
     bot.connect(USERNAME, PASSWORD, SERVER, ROOM)
 
     # Add plugins to the bot

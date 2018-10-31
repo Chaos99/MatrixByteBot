@@ -11,7 +11,7 @@ from json import JSONDecodeError
 from urllib import request
 from urllib.error import HTTPError, URLError
 
-from plugin import Plugin
+from .plugin import Plugin
 
 
 STATUS_LOG = logging.getLogger('StatusPluginLog')
@@ -91,9 +91,11 @@ class StatusPlugin(Plugin):
         else:
              url = "https://status.bytespeicher.org/status.json"
         try:
-            #Request the ical file.
+            #Request the status api file.
+            #urllib may pose a security risk because it can open local files with file://
+            #this is not a problem here as URLs are hardcoded/come from settings file
             req = request.Request(url)
-            with request.urlopen(req) as resp:
+            with request.urlopen(req) as resp: # nosec (disables security warning)
             # with request.urlopen(url if url.startswith("http") else "") as resp:
                 STATUS_LOG.debug("Room  %s ", str(room.name))
                 STATUS_LOG.debug("URL requested")

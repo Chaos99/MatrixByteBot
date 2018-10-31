@@ -61,11 +61,12 @@ Checked with Codacy
 ## Usage instructions
 1.  Change private_settings.py with username, password, servername and room
 2.  use 'git update-index --assume-unchanged private_settings.py' to no longer track changes and not accidentally upload your password
-3.  Start with ./start.sh (will start the bot inside a tmux shell by the name of 'bytebot')
-4.  add ./gitupdate.sh to your crontab if you want to track github changes to the current branch (bot will stop, update, restart if changes are available)
-5.  use 'tmux a -t bytebot' to connect to the session and see the terminal printout
-6.  use ./stop.sh to stop the process (but keep the tmux session)
-7.  use 'tmux kill-session -t bytebot' to also close the session
+3.  Start a tmux session with tmux new -d -s bytebot (only needed once per reboot) 
+4.  Start with ./start.sh (will start the bot inside a tmux shell by the name of 'bytebot')
+5.  add ./gitupdate.sh to your crontab if you want to track github changes to the current branch (bot will stop, update, restart if changes are available)
+6.  use 'tmux a -t bytebot' to connect to the session and see the terminal printout
+7.  use ./stop.sh to stop the process (but keep the tmux session)
+8.  use 'tmux kill-session -t bytebot' to also close the session
 
 ## License and Credits
 See LICENSE file for GPLv3 license of this software.
@@ -81,6 +82,18 @@ MIT License
 schedule python package <https://pypi.org/project/schedule/>
 Daniel Bader - @dbader_org - <mailto://mail@dbader.org>
 MIT license
+
+pytest - Python testing framework 
+<https://pytest.org>
+MIT License
+
+python-codacy-coverage
+<https://github.com/codacy/python-codacy-coverage>
+BSD 3-Clause "New" or "Revised" License
+
+pytest-cov - coverage plugin for pytest
+<https://github.com/pytest-dev/pytest-cov>
+MIT License
 
 Based on (and contains snipets of code from) 
 <https://github.com/Bytespeicher/Bytebot>

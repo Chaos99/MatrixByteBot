@@ -14,3 +14,7 @@ pipenv install   # installs all dependencies based on pipfile
 
 # manual installation
 #pipenv install matrix-client
+#pipenv install schedule
+#pipenv install pytest
+#pipenv install pytest-cov
+#pipenv install codacy-coverage

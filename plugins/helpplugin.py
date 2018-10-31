@@ -7,7 +7,7 @@ from all other plugins and displays them
 import re
 import logging
 
-from plugin import Plugin
+from .plugin import Plugin
 
 HELP_LOG = logging.getLogger('HelpPluginLog')
 
@@ -16,11 +16,11 @@ class HelpPlugin(Plugin):
     from all other plugins and displays them"""
 
     def __init__(self, name, bot):
-        HELP_LOG.debug("Creating HelpPlugin")
+        HELP_LOG.debug("Creating %s", name)
         Plugin.__init__(self, name, bot)
         HELP_LOG.debug("Adding matcher for '!Help'")
-        Plugin.add_matcher(self, re.compile("![Hh]elp"))
-        Plugin.add_matcher(self, re.compile("![Aa]bout"))
+        self.add_matcher(re.compile("![Hh]elp"))
+        self.add_matcher(re.compile("![Aa]bout"))
 
         self.bot = bot #safe for later use
         self.help_text = ""
@@ -44,6 +44,7 @@ class HelpPlugin(Plugin):
 
     @staticmethod
     def get_about():
+        """provide about-text to link to repo and state license"""
         text = ("MatrixByteBot by @Chaos:erfurt.chat\n"
                 "GNU General Public License v3.0 (https://www.gnu.org/licenses/gpl.html)\n"
                 "Sources at https://github.com/Chaos99/MatrixByteBot\n"

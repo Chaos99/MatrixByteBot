@@ -12,8 +12,9 @@ class MockBot():
 
 class MockRoom():
     "mockup room"
-    def __init__(self):
+    def __init__(self, name = ''):
         self.text_response = ""
+        self.name = name
 
     def send_text(self, text):
         """capture the messages sent to this room"""
@@ -68,7 +69,7 @@ def test_users():
     status_plugin = StatusPlugin("nametest", bot)
     room = MockRoom()
     status_plugin.users(room)
-    assert "space" in room.text_response
+    assert "Space" in room.text_response
 
 def test_status():
     """make sure some text is returned"""

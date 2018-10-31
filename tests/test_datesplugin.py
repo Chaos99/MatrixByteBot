@@ -90,7 +90,7 @@ def test_output_dates():
     copyfile('tests/dates.example', 'tmp/dates.cache')
     test_plugin.output_dates(testtime, testtime + timedelta(days=21), 'Bytespeicher', room,)
     assert "Kennenlerntreffen" in room.text_response
-    assert len(room.text_response.split('\n')) == 11
+    assert len(room.text_response.split('\n')) == 12
 #
 #def test_status():
 #    """make sure some text is returned"""

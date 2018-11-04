@@ -2,33 +2,22 @@
 """
 Testing file for statusplugin.py
 """
+from configparser import ConfigParser
+from .helpers.mockups import MockRoom, MockBot
 from ..plugins.hiplugin import HiPlugin
 from ..matrixbot import MatrixBot
 
-class MockBot():
-    """mockup class to replace bot class"""
-    def __init__(self):
-        self.fullname = "DummyBot"
-
-class MockRoom():
-    "mockup room"
-    def __init__(self):
-        self.text_response = ""
-
-    def send_text(self, text):
-        """capture the messages sent to this room"""
-        self.text_response = text
-
-
 def test_callback():
     """make sure some text is returned"""
-    bot = MatrixBot("DummyName", "http://example.com")
+    config = ConfigParser(comment_prefixes=(';'), interpolation=None)
+    config.read('config/config.ini')
+    bot = MatrixBot(config)
     hi_plugin = HiPlugin("nametest", bot)
 
-    events= [{'content':{'body':'!hi'}, 'sender':'test'},
-             {'content':{'body':'!Hi'}, 'sender':'test'},
-             {'content':{'body':'!Hello'}, 'sender':'test'},
-             {'content':{'body':'!hello'}, 'sender':'test'}]
+    events = [{'content':{'body':'!hi'}, 'sender':'test'},
+              {'content':{'body':'!Hi'}, 'sender':'test'},
+              {'content':{'body':'!Hello'}, 'sender':'test'},
+              {'content':{'body':'!hello'}, 'sender':'test'}]
 
     room = MockRoom()
     for event in events:

@@ -2,28 +2,19 @@
 """
 Testing file for statusplugin.py
 """
+from configparser import ConfigParser
+
+from .helpers.mockups import MockRoom, MockBot
+
 from ..plugins.statusplugin import StatusPlugin
 from ..matrixbot import MatrixBot
 
-class MockBot():
-    """mockup class to replace bot class"""
-    def __init__(self):
-        self.fullname = "DummyBot"
-
-class MockRoom():
-    "mockup room"
-    def __init__(self, name = ''):
-        self.text_response = ""
-        self.name = name
-
-    def send_text(self, text):
-        """capture the messages sent to this room"""
-        self.text_response = text
-
-
 def test_callback():
     """make sure some text is returned"""
-    bot = MatrixBot("DummyName", "http://example.com")
+
+    config = ConfigParser(comment_prefixes=(';'))
+    config.read('config/config.ini')
+    bot = MatrixBot(config)
     status_plugin = StatusPlugin("nametest", bot)
     bot.add_plugin(StatusPlugin("Status-Plugin", bot))
 
@@ -36,15 +27,20 @@ def test_callback():
     room = MockRoom()
     status_plugin.users(room)
     call = room.text_response
+    room.clean_buffer()
     status_plugin.callback(room, users_event)
     assert room.text_response == call
+    room.clean_buffer()
     status_plugin.callback(room, users_event2)
     assert room.text_response == call
+    room.clean_buffer()
 
     status_plugin.status(room)
     call = room.text_response
+    room.clean_buffer()
     status_plugin.callback(room, status_event)
     assert room.text_response == call
+    room.clean_buffer()
     status_plugin.callback(room, status_event2)
     assert room.text_response == call
 
@@ -57,7 +53,9 @@ def test_get_help():
 
 def test_spaceapi():
     """make sure some text is returned"""
-    bot = MatrixBot("DummyName", "http://example.com")
+    config = ConfigParser(comment_prefixes=(';'), interpolation=None)
+    config.read('config/config.ini')
+    bot = MatrixBot(config)
     status_plugin = StatusPlugin("nametest", bot)
     room = MockRoom()
     sample = status_plugin.spaceapi(room)
@@ -65,15 +63,19 @@ def test_spaceapi():
 
 def test_users():
     """make sure some text is returned"""
-    bot = MatrixBot("DummyName", "http://example.com")
+    config = ConfigParser(comment_prefixes=(';'), interpolation=None)
+    config.read('config/config.ini')
+    bot = MatrixBot(config)
     status_plugin = StatusPlugin("nametest", bot)
     room = MockRoom()
     status_plugin.users(room)
-    assert "Space" in room.text_response
+    assert "space" in room.text_response
 
 def test_status():
     """make sure some text is returned"""
-    bot = MatrixBot("DummyName", "http://example.com")
+    config = ConfigParser(comment_prefixes=(';'), interpolation=None)
+    config.read('config/config.ini')
+    bot = MatrixBot(config)
     status_plugin = StatusPlugin("nametest", bot)
     room = MockRoom()
     status_plugin.status(room)

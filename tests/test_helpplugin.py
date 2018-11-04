@@ -2,27 +2,18 @@
 """
 Testing file for helpplugin.py
 """
+from configparser import ConfigParser
+
+from .helpers.mockups import MockBot, MockRoom
 from ..plugins.helpplugin import HelpPlugin
 from ..matrixbot import MatrixBot
-
-class MockBot():
-    """mockup class to replace bot class"""
-    def __init__(self):
-        self.fullname = "DummyBot"
-
-class MockRoom():
-    "mockup room"
-    def __init__(self):
-        self.text_response = ""
-
-    def send_text(self, text):
-        """capture the messages sent to this room"""
-        self.text_response = text
 
 
 def test_callback():
     """make sure some text is returned"""
-    bot = MatrixBot("DummyName", "http://example.com")
+    config = ConfigParser(comment_prefixes=(';'), interpolation=None)
+    config.read('config/config.ini')
+    bot = MatrixBot(config)
     help_plugin = HelpPlugin("nametest", bot)
     bot.add_plugin(HelpPlugin("Help-Plugin", bot))
 
@@ -36,12 +27,15 @@ def test_callback():
     help_plugin.callback(room, about_event)
     about = help_plugin.get_about()
     assert about == room.text_response
+    room.clean_buffer()
     help_plugin.callback(room, about_event2)
     assert about == room.text_response
+    room.clean_buffer()
 
     help_plugin.callback(room, help_event)
     help_text = help_plugin.collect_help()
     assert room.text_response == help_text
+    room.clean_buffer()
     help_plugin.callback(room, help_event2)
     assert room.text_response == help_text
 
@@ -54,7 +48,9 @@ def test_get_help():
 
 def test_collect_help():
     """make sure some text is returned"""
-    bot = MatrixBot("DummyName", "http://example.com")
+    config = ConfigParser(comment_prefixes=(';'), interpolation=None)
+    config.read('config/config.ini')
+    bot = MatrixBot(config)
     help_plugin = HelpPlugin("nametest", bot)
     bot.add_plugin(HelpPlugin("Help-Plugin", bot))
     sample = help_plugin.collect_help()

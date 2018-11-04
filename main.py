@@ -8,6 +8,7 @@ Test it out by adding it to a group chat and doing one of the following:
 """
 
 import logging
+from configparser import ConfigParser
 
 from matrixbot import MatrixBot
 
@@ -16,6 +17,7 @@ from plugins.helpplugin import HelpPlugin
 from plugins.maintenanceplugin import MaintenancePlugin
 from plugins.datesplugin import DatesPlugin
 from plugins.statusplugin import StatusPlugin
+
 
 # logging configuration
 logging.basicConfig(level=logging.DEBUG)
@@ -26,27 +28,19 @@ logging.getLogger("schedule").setLevel(logging.WARNING)
 
 MAIN_LOG = logging.getLogger('MainLog')
 
-USERNAME = ""  # Bot's username (see private_settings.py)
-PASSWORD = ""  # Bot's password (see private_settings.py)
-SERVER = ""  # Matrix server URL (see private_settings.py)
-ROOM = "" # Room name (see private_settings.py)
-
-# import username, password, server and room name from external file
-try:
-    from private_settings import PASSWORD, USERNAME, SERVER, ROOM
-except ImportError:
-    pass
-
+CONFIG = ConfigParser(comment_prefixes=(';'), interpolation=None)
+if not CONFIG.read('config/config.ini'):
+    raise ValueError("No config file found at config/config.ini")
 
 def main():
     """Main function to start the bot, add plugins and start listening loop"""
     # Create an instance of the MatrixBotAPI
     MAIN_LOG.debug("main() started, trying to initialize")
-    MAIN_LOG.debug("MatrixBot initializing with room %s", ROOM)
-    bot = MatrixBot(USERNAME, SERVER)
+    MAIN_LOG.debug("MatrixBot initializing with room %s", CONFIG['bot']['room'])
+    bot = MatrixBot(CONFIG)
     bot.init_scheduler()
 
-    bot.connect(USERNAME, PASSWORD, SERVER, ROOM)
+    bot.connect()
 
     # Add plugins to the bot
     bot.add_plugin(HiPlugin("SayHi-Plugin", bot))

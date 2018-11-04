@@ -2,12 +2,8 @@
 """
 Testing file for helpplugin.py
 """
+from .helpers.mockups import MockBot
 from ..plugins.maintenanceplugin import MaintenancePlugin
-
-class MockBot():
-    """mockup class to replace bot class"""
-    def __init__(self):
-        self.fullname = "DummyBot"
 
 def test_get_version():
     """make sure some text is returned"""

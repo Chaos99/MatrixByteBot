@@ -30,6 +30,7 @@ class StatusPlugin(Plugin):
         self.bot = bot #safe for later use
         self.help_text = ""
         self.first_run = True
+        self.config = bot.config['plugins.status']
 
 
     def callback(self, room, event):
@@ -83,13 +84,12 @@ class StatusPlugin(Plugin):
             STATUS_LOG.error(error)
             room.send_text('\tError while retrieving user data')
 
-    @staticmethod
-    def spaceapi(room):
+    def spaceapi(self, room):
         ''' Download spacapi json and return decoded content'''
         if room.name == "Makerspace Erfurt":
-             url = "https://status.makerspace-erfurt.de/status.json"
+            url = self.config['url.makerspace']
         else:
-             url = "https://status.bytespeicher.org/status.json"
+            url = self.config['url.bytespeicher']
         try:
             #Request the status api file.
             #urllib may pose a security risk because it can open local files with file://

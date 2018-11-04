@@ -1,0 +1,111 @@
+
+[DEFAULT]
+; keep this to enable use of ${hash} to escape # below 
+hash = #
+
+[bot]
+; display name
+nick = 
+;login name
+username = 
+password = 
+
+host = https://erfurt.chat
+room = #bot_test:erfurt.chat
+
+includes =
+    plugins.hiplugin
+  
+
+; the bot will join ;bytebot_channel
+; ${hash} is replaced by the ; char
+autojoins =
+    ${hash}bot_test:erfurt.chat
+
+; Autojoin delay, disabled by default
+; float or int value
+; autojoin_delay = 3.1
+
+[plugins.status]
+url.bytespeicher = https://status.bytespeicher.org/status.json
+url.makerspace = https://status.makerspace-erfurt.de/status.json
+
+[plugins.maintenance]
+versionfile = CHANGELOG.md
+versionpattern = ${hash}${hash}\s*(.*)
+historyfile = CHANGELOG
+historypattern = ${hash}${hash}\s*(.*)
+historylength = 9
+
+[plugins.cccongress]
+url = https://fahrplan.events.ccc.de/congress/YEAR/Fahrplan/schedule.json
+; cache = /tmp/cccongress.cache
+; announce_minutes = 15
+
+[plugins.dates]
+url = http://www.google.com/calendar/ical/2eskb61g20prl65k2qd01uktis%40group.calendar.google.com/public/basic.ics
+cache = /tmp/dates.cache
+; Days in the future to show on list request
+list_days = 21
+; Minutes in the future to show event announcement (space separated list for multiple values)
+announce_minutes = 60 1440
+; Do not show default location
+filter_location = Bytespeicher
+
+[plugins.fuel]
+apikey = your_apikey
+; lat = 50.9827792
+; lng = 11.0394426
+; rad = 10
+
+[plugins.parking]
+; url = parking_url
+
+[plugins.rss]
+; RSS-Name =
+;     URL to RSS feed
+;     Tempfile for caching
+;     feed type (dokuwiki, wordpress, github, redmine)
+Wiki =
+    http://www.technikkultur-erfurt.de/feed.php
+    /tmp/feed_wiki.cache
+    dokuwiki
+Website =
+    https://bytespeicher.org/feed/
+    /tmp/feed_website.cache
+    wordpress
+BytebotCommits =
+    https://github.com/Chaos99/MatrixByteBot/commits/master.atom
+    /tmp/feed_bytebot.cache
+    github
+Redmine =
+    http://redmine.bytespeicher.org/issues.atom
+    /tmp/feed_rm_bytespeicher.cache
+    redmine
+SpacestatusCommits =
+    https://github.com/Bytespeicher/space-status/commits/master.atom
+    /tmp/feed_spacestatus.cache
+    github
+
+[plugins.shorturl]
+clarifai_app_id = yourappid
+clarifai_app_secret = yourappsecret
+
+[plugins.station]
+; city = Erfurt
+; id from station list json
+; id = 151213
+; announce_minutes = 30
+url_stationlist = https://evag-live.wla-backend.de/stations/latest.json
+; {extId} will be replaced by station id
+url_departures = https://evag-live.wla-backend.de/node/v1/departures/{extId}
+; cache = /tmp/station.cache
+
+[plugins.weather]
+api_key = your_apikey
+url = http://api.openweathermap.org/data/2.5/weather?units=metric&q=
+location = erfurt,de
+
+[plugins.wikipedia]
+url = https://de.wikipedia.org/w/api.php?&action=query&format=json&prop=extracts&exintro=&explaintext=&titles=
+; length_of_abstract = 400

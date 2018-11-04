@@ -9,6 +9,7 @@ import time
 
 from urllib import request
 from urllib.error import HTTPError, URLError
+from pathlib import Path
 
 from datetime import datetime, timedelta
 from dateutil.rrule import rruleset, rrulestr
@@ -16,7 +17,6 @@ from dateutil.parser import parse
 from icalendar import Calendar
 from icalendar.prop import vDDDTypes, vDDDLists
 from pytz import utc, timezone
-from pathlib import Path
 
 from .plugin import Plugin
 
@@ -37,6 +37,7 @@ class DatesPlugin(Plugin):
         self.bot = bot #safe for later use
         self.help_text = ""
         self.first_run = True
+        self.config = bot.config['plugins.dates']
 
 
     def callback(self, room, event):
@@ -60,8 +61,9 @@ class DatesPlugin(Plugin):
                                         second=0,
                                         microsecond=0)
         self._update_cache(room)
+        look_back = self.config['list_days']
         self.output_dates(now,
-                          now + timedelta(days=21),
+                          now + timedelta(days=look_back),
                           'Bytespeicher',
                           room)
 
@@ -75,15 +77,20 @@ class DatesPlugin(Plugin):
         """Announce next dates"""
         now = datetime.utcnow().replace(second=0,
                                         microsecond=0)
-        for minutes in [10, 1440]:
+        if "Makerspace Erfurt" in self.bot.all_rooms.name:
+            filter_location = self.config['filter_MS']
+        elif "Bytespeicher" in self.bot.all_rooms.name:
+            filter_location = self.config['filter_BS']
+        else:
+            filter_location = ''
+        for minutes in self.config['announce_minutes'].split(' '):
             self.output_dates(now + timedelta(minutes=int(minutes)),
                               now + timedelta(minutes=int(minutes)),
-                              'Bytespeicher',
+                              filter_location,
                               self.bot.all_rooms,
                               int(minutes))
 
-    @staticmethod
-    def output_dates(now, then, filter_location, room, announce=0):
+    def output_dates(self, now, then, filter_location, room, announce=0):
         """
         Output dates between now and then and filter default location.
         Set announce greater 0 to add announce message and
@@ -96,8 +103,8 @@ class DatesPlugin(Plugin):
                 file = open(str(tmp_dates_cache), encoding='UTF-8')
                 raw_text = file.read()
                 text = raw_text
-                if len(text) == 0:
-                   return
+                if not text:
+                    return
             else:
                 return
         except OSError as error:
@@ -144,7 +151,7 @@ class DatesPlugin(Plugin):
                     # location to the location name without address.
 
                     if "LOCATION" in event:
-                        if not event["LOCATION"].startswith(filter_location):
+                        if filter_location and not event["LOCATION"].startswith(filter_location):
                             loc = event["LOCATION"].split(', ')[0]
 
                     # Recurrence handling starts here.
@@ -250,22 +257,22 @@ class DatesPlugin(Plugin):
                     last_output = output
                     all_output += output
                     #room.send_text(output)
-            if len(all_output) > 0:
-               room.send_text(all_output)
+            if all_output: # is > 0
+                room.send_text(all_output)
 
             if found == 0 and announce == 0:
+                look_back = self.config['list_days']
                 room.send_text(
-                    "No dates during the next %d days" % 21
+                    "No dates during the next %d days" % look_back
                 )
 
         except KeyError:
             room.send_text("Error while retrieving dates data")
             raise Exception()
 
-    @staticmethod
-    def _update_cache(room):
+    def _update_cache(self, room):
         """Update cached ical file"""
-        url = 'http://www.google.com/calendar/ical/2eskb61g20prl65k2qd01uktis%40group.calendar.google.com/public/basic.ics'
+        url = self.config['url']
         try:
             #Request the ical file.
             #urllib may pose a security risk because it can open local files with file://
@@ -294,7 +301,8 @@ class DatesPlugin(Plugin):
 
         try:
             # Save ical cache to disk
-            cache = open('tmp/dates.cache', "w", encoding='utf-8')
+            cache_file = self.config['cache']
+            cache = open(cache_file, "w", encoding='utf-8')
             #cache.truncate(0)
             #cache.write('%s' % text.encode(encoding))
             cache.write(text) #already encoded through encoding param on file open?

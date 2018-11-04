@@ -17,6 +17,8 @@ from plugins.maintenanceplugin import MaintenancePlugin
 from plugins.datesplugin import DatesPlugin
 from plugins.statusplugin import StatusPlugin
 
+from configparser import ConfigParser
+
 # logging configuration
 logging.basicConfig(level=logging.DEBUG)
 logging.getLogger("requests").setLevel(logging.WARNING)
@@ -26,27 +28,19 @@ logging.getLogger("schedule").setLevel(logging.WARNING)
 
 MAIN_LOG = logging.getLogger('MainLog')
 
-USERNAME = ""  # Bot's username (see private_settings.py)
-PASSWORD = ""  # Bot's password (see private_settings.py)
-SERVER = ""  # Matrix server URL (see private_settings.py)
-ROOM = "" # Room name (see private_settings.py)
-
-# import username, password, server and room name from external file
-try:
-    from private_settings import PASSWORD, USERNAME, SERVER, ROOM
-except ImportError:
-    pass
-
+config = ConfigParser(comment_prefixes = (';'))
+with open('config/config.ini', 'r') as configfile:
+    config.read(configfile)
 
 def main():
     """Main function to start the bot, add plugins and start listening loop"""
     # Create an instance of the MatrixBotAPI
     MAIN_LOG.debug("main() started, trying to initialize")
-    MAIN_LOG.debug("MatrixBot initializing with room %s", ROOM)
-    bot = MatrixBot(USERNAME, SERVER)
+    MAIN_LOG.debug("MatrixBot initializing with room %s", config['bot']['room'])
+    bot = MatrixBot(config)
     bot.init_scheduler()
 
-    bot.connect(USERNAME, PASSWORD, SERVER, ROOM)
+    bot.connect())
 
     # Add plugins to the bot
     bot.add_plugin(HiPlugin("SayHi-Plugin", bot))

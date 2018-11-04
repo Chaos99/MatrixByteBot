@@ -17,25 +17,30 @@ BOT_LOG = logging.getLogger('BotLog')
 
 class MatrixBot:
     """The main bot, connecting to the server and handling plugins"""
-    def __init__(self, username, server):
-        self.username = username
-        self.fullname = "@"+str(username).lower()+':'+urlparse(server).hostname
+    def __init__(self, config):
+        self.username = config['bot']['username']
+        server = config['bot']['host']
+        self.fullname = "@"+str(self.username).lower()+':'+urlparse(server).hostname
         self.plugins = []
         self.api = None
         self.current_room = ""
         self.members = []
         self.all_rooms = None
-
+        self.config = config
         # Connect to server
         BOT_LOG.debug("creating matrix client for server %s", server)
         self.client = MatrixClient(server)
 
 
-    def connect(self, username, password, server, room_id):
+    def connect(self):
         ''' log in to the server and get connected rooms'''
+        password = self.config['bot']['password']
+        username = self.username
+        server = self.config['bot']['host']
+        room_id = self.config['bot']['room']
         try:
             BOT_LOG.debug("Trying to log in as %s pw: %s",
-                          username, "".join(['*' for p in password]))
+                          self.username, "".join(['*' for p in password]))
             token = self.client.login(username, password)
             BOT_LOG.debug("Got Token %s..%s", token[0:3], token[-3:-1])
         except MatrixRequestError as error:
@@ -132,7 +137,7 @@ class VirtualRoom:
     several rooms to make general anouncements'''
     def __init__(self, room_list):
         self.room_list = room_list
-        self.name = None
+        self.name = self.get_display_name()
         self.cannonical_alias = None
 
     def send_text(self, text):
@@ -140,9 +145,9 @@ class VirtualRoom:
         for room in self.room_list:
             room.send_text(text)
 
-    def display_name(self):
+    def get_display_name(self):
         """Calculates the display name for a room."""
-        self.name = "\n".join([room.name for room in self.room_list])
-        if len(self.name) < 2:
-            self.name = "{} unnamed rooms".format(len(self.room_list))
-        return self.name
+        name = "\n".join([room.name for room in self.room_list])
+        if len(name) < 2:
+            name = "{} unnamed rooms".format(len(self.room_list))
+        return name

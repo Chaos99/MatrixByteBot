@@ -25,6 +25,7 @@ class MaintenancePlugin(Plugin):
         self.add_matcher(re.compile("![Hh]istory"))
 
         self.bot = bot #safe for later use
+        self.config = bot.config['plugins.maintenance']
         self.first_run = {'plugins':True,
                           'version':True,
                           'history':True}
@@ -47,12 +48,12 @@ class MaintenancePlugin(Plugin):
         return self.plugin_names
 
     def get_version(self):
-        """ get version number from topmost entry in CHANGELOG.mf"""
+        """ get version number from topmost entry in CHANGELOG.md"""
         if not self.first_run['version']:
             pass
         else:
-            pattern = re.compile(r'##\s*(.*)')
-            for line in open('CHANGELOG.md'):
+            pattern = re.compile(self.config['versionpattern'])
+            for line in open(self.config['versionfile']):
                 match = re.match(pattern, line)
                 if match is not None:
                     self.version = match.group(1)
@@ -67,12 +68,12 @@ class MaintenancePlugin(Plugin):
 
     def get_history(self):
         """ extract a few lines from the CHANGELOG file"""
-        length = 9
+        length = self.config['historylength']
         if not self.first_run['history']:
             pass
         else:
-            pattern = re.compile(r'##\s*(.*)')
-            with open('CHANGELOG.md') as file:
+            pattern = re.compile(self.config['historypattern'])
+            with open(self.config['historyfile']) as file:
                 lines = file.readlines()
                 for i, line in enumerate(lines):
                     if pattern.match(line):

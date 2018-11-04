@@ -8,6 +8,7 @@ Test it out by adding it to a group chat and doing one of the following:
 """
 
 import logging
+from configparser import ConfigParser
 
 from matrixbot import MatrixBot
 
@@ -17,7 +18,6 @@ from plugins.maintenanceplugin import MaintenancePlugin
 from plugins.datesplugin import DatesPlugin
 from plugins.statusplugin import StatusPlugin
 
-from configparser import ConfigParser
 
 # logging configuration
 logging.basicConfig(level=logging.DEBUG)
@@ -28,19 +28,19 @@ logging.getLogger("schedule").setLevel(logging.WARNING)
 
 MAIN_LOG = logging.getLogger('MainLog')
 
-config = ConfigParser(comment_prefixes = (';'))
-with open('config/config.ini', 'r') as configfile:
-    config.read(configfile)
+CONFIG = ConfigParser(comment_prefixes=(';'), interpolation=None)
+if not CONFIG.read('config/config.ini'):
+    raise ValueError("No config file found at config/config.ini")
 
 def main():
     """Main function to start the bot, add plugins and start listening loop"""
     # Create an instance of the MatrixBotAPI
     MAIN_LOG.debug("main() started, trying to initialize")
-    MAIN_LOG.debug("MatrixBot initializing with room %s", config['bot']['room'])
-    bot = MatrixBot(config)
+    MAIN_LOG.debug("MatrixBot initializing with room %s", CONFIG['bot']['room'])
+    bot = MatrixBot(CONFIG)
     bot.init_scheduler()
 
-    bot.connect())
+    bot.connect()
 
     # Add plugins to the bot
     bot.add_plugin(HiPlugin("SayHi-Plugin", bot))

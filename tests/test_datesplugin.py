@@ -2,29 +2,14 @@
 """
 Testing file for datesplugin.py
 """
-from ..plugins.datesplugin import DatesPlugin as TestPlugin
-#from ..matrixbot import MatrixBot
 from os.path import getmtime
 from os import remove
-import schedule
 from datetime import datetime, timedelta
 from shutil import copyfile
 
-class MockBot():
-    """mockup class to replace bot class"""
-    def __init__(self):
-        self.fullname = "DummyBot"
-        self.schedule = schedule
+from .helpers.mockups import MockBot, MockRoom
 
-class MockRoom():
-    "mockup room"
-    def __init__(self):
-        self.text_response = ""
-
-    def send_text(self, text):
-        """capture the messages sent to this room"""
-        self.text_response += text + ("\n")
-
+from ..plugins.datesplugin import DatesPlugin as TestPlugin
 
 #def test_callback():
 #    """make sure some text is returned"""
@@ -90,7 +75,7 @@ def test_output_dates():
     copyfile('tests/dates.example', 'tmp/dates.cache')
     test_plugin.output_dates(testtime, testtime + timedelta(days=21), 'Bytespeicher', room,)
     assert "Kennenlerntreffen" in room.text_response
-    assert len(room.text_response.split('\n')) == 12
+    assert len(room.text_response.split('\n')) == 11
 #
 #def test_status():
 #    """make sure some text is returned"""

@@ -61,7 +61,7 @@ class DatesPlugin(Plugin):
                                         second=0,
                                         microsecond=0)
         self._update_cache(room)
-        look_back = self.config['list_days']
+        look_back = self.config.getint('list_days')
         self.output_dates(now,
                           now + timedelta(days=look_back),
                           'Bytespeicher',
@@ -261,7 +261,7 @@ class DatesPlugin(Plugin):
                 room.send_text(all_output)
 
             if found == 0 and announce == 0:
-                look_back = self.config['list_days']
+                look_back = self.config.getint('list_days')
                 room.send_text(
                     "No dates during the next %d days" % look_back
                 )

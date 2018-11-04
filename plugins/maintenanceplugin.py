@@ -68,7 +68,7 @@ class MaintenancePlugin(Plugin):
 
     def get_history(self):
         """ extract a few lines from the CHANGELOG file"""
-        length = self.config['historylength']
+        length = self.config.getint('historylength')
         if not self.first_run['history']:
             pass
         else:

@@ -147,7 +147,7 @@ class VirtualRoom:
 
     def get_display_name(self):
         """Calculates the display name for a room."""
-        name = "\n".join([room.name for room in self.room_list])
+        name = "\n".join([room.name if room.name else '' for room in self.room_list])
         if len(name) < 2:
             name = "{} unnamed rooms".format(len(self.room_list))
         return name

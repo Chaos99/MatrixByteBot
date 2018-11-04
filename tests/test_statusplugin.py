@@ -27,7 +27,7 @@ def test_callback():
     room = MockRoom()
     status_plugin.users(room)
     call = room.text_response
-    room.clean_buffer()    
+    room.clean_buffer()
     status_plugin.callback(room, users_event)
     assert room.text_response == call
     room.clean_buffer()

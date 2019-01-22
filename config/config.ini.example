@@ -32,9 +32,9 @@ url.makerspace = https://status.makerspace-erfurt.de/status.json
 
 [plugins.maintenance]
 versionfile = CHANGELOG.md
-versionpattern = ${hash}${hash}\s*(.*)
-historyfile = CHANGELOG
-historypattern = ${hash}${hash}\s*(.*)
+versionpattern = ##\s*(.*)
+historyfile = CHANGELOG.md
+historypattern = ##\s*(.*)
 historylength = 9
 
 [plugins.cccongress]

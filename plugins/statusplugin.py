@@ -49,7 +49,8 @@ class StatusPlugin(Plugin):
     def get_help():
         """Return help text"""
         return ("Print room status with !status\n"
-                "Print list of users in the space with !users")
+                "Print list of users in the space with !users"
+                "Automatically announces status change to channel")
 
     def status_announce_change(self):
         """Triggers status output if door status changes"""

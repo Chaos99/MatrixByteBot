@@ -42,6 +42,6 @@ class MockRoom():
         '''clear the message buffer'''
         self.text_response = ''
         self.first_response = True
-        
+
     def copy(self):
         return MockRoom(self.name)

@@ -15,10 +15,8 @@ def test_callback():
 
     config = ConfigParser(comment_prefixes=(';'))
     config.read('config/config.ini')
-    bot = MatrixBot(config)
-    bot.init_scheduler()
+    bot = MockBot()
     status_plugin = StatusPlugin("nametest", bot)
-    bot.add_plugin(StatusPlugin("Status-Plugin", bot))
 
     users_event = {'content':{'body':'!users'}}
     users_event2 = {'content':{'body':'!Users'}}
@@ -45,7 +43,6 @@ def test_callback():
     room.clean_buffer()
     status_plugin.callback(room, status_event2)
     assert room.text_response == call
-    bot.stop_scheduler()
 
 def test_get_help():
     """make sure some text is returned"""
@@ -77,7 +74,7 @@ def test_users():
     status_plugin = StatusPlugin("nametest", bot)
     room = MockRoom()
     status_plugin.users(room)
-    assert "space" in room.text_response
+    assert "space" in room.text_response or "Space" in room.text_response
     #bot.stop_scheduler()
 
 def test_status():

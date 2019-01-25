@@ -15,6 +15,7 @@ from .plugin import Plugin
 
 
 STATUS_LOG = logging.getLogger('StatusPluginLog')
+STATUS_LOG.setLevel(logging.DEBUG)
 
 class StatusPlugin(Plugin):
     """Collects help messages
@@ -29,12 +30,12 @@ class StatusPlugin(Plugin):
         STATUS_LOG.debug("scheduling announcement check at every 1min")
         bot.schedule.every(1).minutes.do(self.status_announce_change)
 
-
         self.bot = bot #safe for later use
         self.help_text = ""
         self.first_run = True
         self.config = bot.config['plugins.status']
-        self.door_open = ''
+        data = self.spaceapi(self.bot.all_rooms)
+        self.door_open = data['state']['open']
 
 
     def callback(self, room, event):
@@ -54,11 +55,16 @@ class StatusPlugin(Plugin):
 
     def status_announce_change(self):
         """Triggers status output if door status changes"""
+        # set logging level to WARNING
+        STATUS_LOG.setLevel(logging.WARNING)
         data = self.spaceapi(self.bot.all_rooms)
-        #  announce only on status change (and on startup)
+        # set logging level back to DEBUG
+        STATUS_LOG.setLevel(logging.DEBUG)
+        #  announce only on status change
         if self.door_open != data['state']['open']:
             self.status(self.bot.all_rooms)
             self.door_open = data['state']['open']
+
 
 
     def status(self, room):

@@ -15,6 +15,7 @@ from .plugin import Plugin
 
 
 STATUS_LOG = logging.getLogger('StatusPluginLog')
+STATUS_LOG.setLevel(logging.DEBUG)
 
 class StatusPlugin(Plugin):
     """Collects help messages
@@ -26,11 +27,15 @@ class StatusPlugin(Plugin):
         STATUS_LOG.debug("Adding matcher for '!status'")
         Plugin.add_matcher(self, re.compile("![sS]tatus"))
         Plugin.add_matcher(self, re.compile("![Uu]ser"))
+        STATUS_LOG.debug("scheduling announcement check at every 1min")
+        bot.schedule.every(1).minutes.do(self.status_announce_change)
 
         self.bot = bot #safe for later use
         self.help_text = ""
         self.first_run = True
         self.config = bot.config['plugins.status']
+        data = self.spaceapi(self.bot.all_rooms)
+        self.door_open = data['state']['open']
 
 
     def callback(self, room, event):
@@ -45,7 +50,22 @@ class StatusPlugin(Plugin):
     def get_help():
         """Return help text"""
         return ("Print room status with !status\n"
-                "Print list of users in the space with !users")
+                "Print list of users in the space with !users"
+                "Automatically announces status change to channel")
+
+    def status_announce_change(self):
+        """Triggers status output if door status changes"""
+        # set logging level to WARNING
+        STATUS_LOG.setLevel(logging.WARNING)
+        data = self.spaceapi(self.bot.all_rooms)
+        # set logging level back to DEBUG
+        STATUS_LOG.setLevel(logging.DEBUG)
+        #  announce only on status change
+        if self.door_open != data['state']['open']:
+            self.status(self.bot.all_rooms)
+            self.door_open = data['state']['open']
+
+
 
     def status(self, room):
         """Returns the door status of the hackerspace rooms
@@ -54,9 +74,10 @@ class StatusPlugin(Plugin):
         """
         try:
             data = self.spaceapi(room)
-
+            self.door_open = data['state']['open']
+            STATUS_LOG.debug("Sending state: %s to room %s", str(self.door_open), str(room.name))
             room.send_text(data['space'] + ' status:')
-            if data['state']['open']:
+            if self.door_open:
                 room.send_text('\tThe space is open!')
             else:
                 room.send_text('\tThe space is closed!')
@@ -86,7 +107,7 @@ class StatusPlugin(Plugin):
 
     def spaceapi(self, room):
         ''' Download spacapi json and return decoded content'''
-        if room.name == "Makerspace Erfurt":
+        if "Makerspace Erfurt" in room.name:
             url = self.config['url.makerspace']
         else:
             url = self.config['url.bytespeicher']
@@ -98,7 +119,7 @@ class StatusPlugin(Plugin):
             with request.urlopen(req) as resp: # nosec (disables security warning)
             # with request.urlopen(url if url.startswith("http") else "") as resp:
                 STATUS_LOG.debug("Room  %s ", str(room.name))
-                STATUS_LOG.debug("URL requested")
+                STATUS_LOG.debug("URL %s requested", str(url))
                 if resp.status == 200:
                     #Get text content from http request.
                     STATUS_LOG.debug("Get text")

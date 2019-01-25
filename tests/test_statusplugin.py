@@ -3,6 +3,7 @@
 Testing file for statusplugin.py
 """
 from configparser import ConfigParser
+from unittest import mock
 
 from .helpers.mockups import MockRoom, MockBot
 
@@ -14,9 +15,8 @@ def test_callback():
 
     config = ConfigParser(comment_prefixes=(';'))
     config.read('config/config.ini')
-    bot = MatrixBot(config)
+    bot = MockBot()
     status_plugin = StatusPlugin("nametest", bot)
-    bot.add_plugin(StatusPlugin("Status-Plugin", bot))
 
     users_event = {'content':{'body':'!users'}}
     users_event2 = {'content':{'body':'!Users'}}
@@ -55,28 +55,58 @@ def test_spaceapi():
     """make sure some text is returned"""
     config = ConfigParser(comment_prefixes=(';'), interpolation=None)
     config.read('config/config.ini')
-    bot = MatrixBot(config)
+    bot = MockBot()
+    #bot = MatrixBot(config)
+    #bot.init_scheduler()
     status_plugin = StatusPlugin("nametest", bot)
     room = MockRoom()
     sample = status_plugin.spaceapi(room)
     assert sample['space'] == 'Bytespeicher'
+    #bot.stop_scheduler()
 
 def test_users():
     """make sure some text is returned"""
     config = ConfigParser(comment_prefixes=(';'), interpolation=None)
     config.read('config/config.ini')
-    bot = MatrixBot(config)
+    bot = MockBot()
+    #bot = MatrixBot(config)
+    #bot.init_scheduler()
     status_plugin = StatusPlugin("nametest", bot)
     room = MockRoom()
     status_plugin.users(room)
-    assert "space" in room.text_response
+    assert "space" in room.text_response or "Space" in room.text_response
+    #bot.stop_scheduler()
 
 def test_status():
     """make sure some text is returned"""
     config = ConfigParser(comment_prefixes=(';'), interpolation=None)
     config.read('config/config.ini')
-    bot = MatrixBot(config)
+    #bot = MatrixBot(config)
+    bot = MockBot()
+    #bot.init_scheduler()
     status_plugin = StatusPlugin("nametest", bot)
     room = MockRoom()
     status_plugin.status(room)
     assert "open" in room.text_response or "closed" in room.text_response
+    #bot.stop_scheduler()
+
+def test_status_announce_change():
+    """make sure some text is returned"""
+    config = ConfigParser(comment_prefixes=(';'), interpolation=None)
+    config.read('config/config.ini')
+    bot = MockBot()
+    bot.all_rooms = MockRoom("Bytespeicher")
+    status_plugin = StatusPlugin("nametest", bot)
+    # output status on first start
+    with mock.patch.object(StatusPlugin, 'spaceapi', return_value={"space":"Bytespeicher", "state" : { "open" : False}}):
+        status_plugin.status_announce_change()
+        assert "open" in bot.all_rooms.text_response or "closed" in bot.all_rooms.text_response
+    bot.all_rooms.clean_buffer()
+    # no output without change of state
+    with mock.patch.object(StatusPlugin, 'spaceapi', return_value={"space":"Bytespeicher", "state" : { "open" : False}}):
+        status_plugin.status_announce_change()
+        assert bot.all_rooms.text_response == ""
+    # trigger output with change
+    with mock.patch.object(StatusPlugin, 'spaceapi', return_value={"space":"Bytespeicher", "state" : { "open" : True}}):
+        status_plugin.status_announce_change()
+        assert "open" in bot.all_rooms.text_response

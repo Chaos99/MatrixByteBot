@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.3.8
+-   added whole day events to date plugin
+-   set cwd to script path to fix path bug in dates plugin
+
 ## 0.3.7
 -   added auto-announce for status plugin
 -   fixed some defaults in the conf file

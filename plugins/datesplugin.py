@@ -6,12 +6,14 @@ Plugin that searches for and displays dates
 import re
 import logging
 import time
+import os
 
 from urllib import request
 from urllib.error import HTTPError, URLError
 from pathlib import Path
 
 from datetime import datetime, timedelta
+from datetime import time as dtime
 from dateutil.rrule import rruleset, rrulestr
 from dateutil.parser import parse
 from icalendar import Calendar
@@ -106,6 +108,7 @@ class DatesPlugin(Plugin):
                 if not text:
                     return
             else:
+                DATES_LOG.error("%s file not found from %s", tmp_dates_cache, os.getcwd())
                 return
         except OSError as error:
             raise Exception(error)
@@ -121,39 +124,38 @@ class DatesPlugin(Plugin):
             # iterate all VEVENTS
             for event in cal.walk('VEVENT'):
                 start = vDDDTypes.from_ical(event["DTSTART"])
+                info = ""
+                loc = ""
 
-            # check if DTSTART could be casted into some instance of
-            # dateime. If so, this indicates an event with a given start
-            # and stop time. There are other events too, e.g. Events
-            # lasting a whole day. Reading DTSTART of such whole day
-            # events will result in some instance of date. We will
-            # handle this case later.
+                # Everyone interested in calendar events wants to get
+                # some summary about the event. So each event
+                # handled here has to have a SUMMARY. If not, we will
+                # discard handling the VEVENT here
+                if "SUMMARY" in event:
+                    info = event["SUMMARY"]
+                else:
+                    continue  # events ohne summary zeigen wir nicht an!
 
+                # Printing the location of an event is important too.
+                # However,
+                # the string containing location info may be too long
+                # to be viewed nicely in IRC.
+                # We filter our default location and strip every other
+                # location to the location name without address.
+
+                if "LOCATION" in event:
+                    if filter_location and not event["LOCATION"].startswith(filter_location):
+                        loc = event["LOCATION"].split(', ')[0]
+
+                # check if DTSTART could be casted into some instance of
+                # dateime. If so, this indicates an event with a given start
+                # and stop time. There are other events too, e.g. Events
+                # lasting a whole day. Reading DTSTART of such whole day
+                # events will result in some instance of date. We will
+                # handle this case later.
                 if isinstance(start, datetime):
                     rset = rruleset()  # create a set of recurrence rules
-                    info = ""
-                    loc = ""
-
-                    # Everyone interested in calendar events wants to get
-                    # some summary about the event. So each event
-                    # handled here has to have a SUMMARY. If not, we will
-                    # discard handling the VEVENT here
-                    if "SUMMARY" in event:
-                        info = event["SUMMARY"]
-                    else:
-                        continue  # events ohne summary zeigen wir nicht an!
-
-                    # Printing the location of an event is important too.
-                    # However,
-                    # the string containing location info may be too long
-                    # to be viewed nicely in IRC.
-                    # We filter our default location and strip every other
-                    # location to the location name without address.
-
-                    if "LOCATION" in event:
-                        if filter_location and not event["LOCATION"].startswith(filter_location):
-                            loc = event["LOCATION"].split(', ')[0]
-
+  
                     # Recurrence handling starts here.
                     # First, we check if there is a recurrence rule (RRULE)
                     # inside the VEVENT, If so, we use the ical like
@@ -231,6 +233,23 @@ class DatesPlugin(Plugin):
                 # TODO handling of whole day events
                 #
                 # if isinstance(start, date):
+                else:
+                    # set starttime at 8am on day one
+                    starttime = utc.localize(datetime.combine(start,dtime(hour=8)));
+                    end = vDDDTypes.from_ical(event["DTEND"])
+                    endtime = utc.localize(datetime.combine(end,dtime(hour=8)));
+                    duration = endtime - starttime
+                    durdays = duration.days
+                    if starttime < utc.localize(now) or starttime > utc.localize(then):
+                        continue
+                    for i in range(durdays):
+                        found += 1
+                        data.append({
+                            'datetime': (starttime + timedelta(days=i)).astimezone(timezone_ef).strftime(fmt),
+                            'datetime_sort': (starttime + timedelta(days=i)).astimezone(timezone_ef).strftime(fmt),
+                            'info': "Ganztägig: " + info + " (Tag " + str(i+1) + ")",
+                            'loc': loc,
+                            })
 
             # lets sort our database, nearest events coming first...
             data = sorted(data,

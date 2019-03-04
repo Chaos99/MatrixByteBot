@@ -9,6 +9,7 @@ Test it out by adding it to a group chat and doing one of the following:
 
 import logging
 from configparser import ConfigParser
+import os
 
 from matrixbot import MatrixBot
 
@@ -34,6 +35,10 @@ if not CONFIG.read('config/config.ini'):
 
 def main():
     """Main function to start the bot, add plugins and start listening loop"""
+    abspath = os.path.abspath(__file__)
+    dname = os.path.dirname(abspath)
+    os.chdir(dname)
+    
     # Create an instance of the MatrixBotAPI
     MAIN_LOG.debug("main() started, trying to initialize")
     MAIN_LOG.debug("MatrixBot initializing with room %s", CONFIG['bot']['room'])
